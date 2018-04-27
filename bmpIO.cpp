@@ -1,4 +1,5 @@
 #include "bmpIO.h"
+#include <vector>
 #include <SDL2/SDL.h>
 
 
@@ -30,14 +31,16 @@ void writeBMP(const char *file, glm::vec4 *image, u32 width, u32 height)
 	u32 bmask = 0x00ff0000;
 	u32 amask = 0xff000000;
 
-	u32 data[width * height];	
+    std::vector<u32> data;	
     for (u32 i = 0; i < width * height; i++) {
-        data[i] = vec4_to_u32(image[i]);
+        data.push_back(vec4_to_u32(image[i]));
     }
 
-	SDL_Surface *surface = SDL_CreateRGBSurfaceFrom((void *)data, width, 
+	SDL_Surface *surface = SDL_CreateRGBSurfaceFrom((void *)data.data(), width, 
 							height, 32, width * 4, rmask, gmask, bmask, amask);
 
-	SDL_SaveBMP(surface, file);
+	if (SDL_SaveBMP(surface, file) < 0) {
+        printf("SDL failed to save file: %s\n", SDL_GetError());
+    }
 	SDL_FreeSurface(surface);
 }

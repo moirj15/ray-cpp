@@ -27,7 +27,8 @@ class Camera
 	f32 filmPlaneHeight;
 	f32	f;
 
-    f32 ldmax;
+    const f32 ldmax = 1.0f;
+    f32 lmax;
 
 	World world;
 public:
@@ -42,7 +43,7 @@ public:
     /**
      *
      */
-	Camera(glm::vec3 e, glm::vec3 l, glm::vec3 u, f32 fp_w, f32 fp_h, f32 ld);
+	Camera(glm::vec3 e, glm::vec3 l, glm::vec3 u, f32 fp_w, f32 fp_h, f32 lm);
 
     /**
      *

@@ -9,7 +9,7 @@
 #include "illumination.h"
 
 static const Light light(glm::vec4(0.97f, 3.00f, 9.5f, 1.0f),
-                        glm::vec4(100.0f, 100.0f, 100.0f, 1.0f),
+                        glm::vec4(1.0f, 1.0f, 1.0f, 1.0f),
                         glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
 
 static const glm::vec3 camera_pos(1.67f, -1.28f, 7.37f);
@@ -29,6 +29,7 @@ int main(int argc, char **argv)
 	(void)argc;
 	(void)argv;
 
+    printf("start\n");
   	World world;
 
 	world.lightList.push_back(light);
@@ -62,13 +63,14 @@ int main(int argc, char **argv)
 							&sphere_illum2));
 
 	Camera *camera = new Camera(camera_pos, look_at, up_vec, film_plane_width,
-                                film_plane_height, ldmax);
+                                film_plane_height, 1.0f);
 
 	world.transform(camera->camTransform);
 
 	camera->render(world);
 
 	writeBMP("test.bmp", camera->picture, WIDTH, HEIGHT);
+    printf("finished\n");
 
     delete(camera);
 

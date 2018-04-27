@@ -10,9 +10,9 @@ Camera::Camera(void)
 
 }
 
-Camera::Camera(glm::vec3 e, glm::vec3 l, glm::vec3 u, f32 fp_w, f32 fp_h, f32 ld)
+Camera::Camera(glm::vec3 e, glm::vec3 l, glm::vec3 u, f32 fp_w, f32 fp_h, f32 lm)
 	: eyepoint(e), lookAt(l), up(u), filmPlaneWidth(fp_w), filmPlaneHeight(fp_h)
-    , ldmax(ld)
+    , lmax(lm)
 {
 	f = eyepoint.z;
 	camTransform = glm::lookAt(eyepoint, lookAt, up);
@@ -41,13 +41,13 @@ void Camera::render(World w)
 			s32 obj = intersection(r, data, -1);
 
 			if (obj == -1) {
-				picture[WIDTH * y + x] = glm::vec4(0.0f, 0.0f, 1.0f, 1.0f);//0xffff0000;
+				picture[WIDTH * y + x] = glm::vec4(0.0f, 0.0f, 1.0f, 1.0f) * lmax;//0xffff0000;
 			}
 			else {
 				glm::vec4 color = calculateLight(data, 
 						objects[obj]->i_model, w.lightList, obj, 1);
                 
-				picture[WIDTH * y + x] = color; 
+				picture[WIDTH * y + x] = color * lmax; 
 			}
 		}
 	}
@@ -191,10 +191,10 @@ void Camera::tone_rep(TONE_TYPE which_type)
 {
     f32 log_avg_luminance;
     for (u64 i = 0; i < PIC_SIZE; i++) {
-    	log_avg_luminance += log(1.11 + 0.27f * picture[i].r + 0.67f * picture[i].g + 0.06f * picture[i].b);
+    	log_avg_luminance += log(0.1f + 0.27f * picture[i].r + 0.67f * picture[i].g + 0.06f * picture[i].b);
     }
-    log_avg_luminance/= PIC_SIZE;
-    log_avg_luminance= exp(log_avg_luminance);
+    log_avg_luminance /= PIC_SIZE;
+    log_avg_luminance = exp(log_avg_luminance);
 
     if (which_type == WARD) {
         f32 world_illum = log_avg_luminance;
@@ -208,7 +208,7 @@ void Camera::tone_rep(TONE_TYPE which_type)
             picture[i] = glm::clamp(picture[i], glm::vec4(0.0f), glm::vec4(1.0f));
         }
     }
-    if (which_type == REINHARD) {
+    else if (which_type == REINHARD) {
         f32 a = 0.18;
         for (u64 i = 0; i < PIC_SIZE; i++) {
             picture[i] *= a / log_avg_luminance;
