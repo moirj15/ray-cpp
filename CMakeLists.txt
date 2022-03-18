@@ -1,30 +1,43 @@
 project(rayTracer)
 
+cmake_minimum_required(VERSION 3.21)
+set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+
 add_executable(
 	rayTracer
-	main.cpp
-	bmpIO.h
-	bmpIO.cpp
-	camera.h
-	camera.cpp
-	object.h
-	object.cpp
-	world.h
-	world.cpp
-	utils.h
-	utils.cpp
-	illumination.cpp
-	illumination.h
-	intersectData.cpp
-	intersectData.h
-	ray.h
-	ray.cpp
+	"src/main.cpp"
+	"src/bmpIO.h"
+	"src/bmpIO.cpp"
+	"src/camera.h"
+	"src/camera.cpp"
+	"src/object.h"
+	"src/object.cpp"
+	src/scene.h
+	src/scene.cpp
+	"src/utils.h"
+	"src/utils.cpp"
+	"src/illumination.cpp"
+	"src/illumination.h"
+	"src/intersectData.cpp"
+	"src/intersectData.h"
+	"src/ray.h"
+	"src/ray.cpp"
 )
 
-set(CMAKE_CXX_FLAGS "-std=c++11 -Wall -Wextra -pedantic")
-set(CMAKE_EXE_LINKER_FLAGES "-lSDL2 -lm")
+target_include_directories(rayTracer
+	PRIVATE
+	libs/glm
+	libs/sdl2/include
+)
+
 target_link_libraries(
 	rayTracer
-	SDL2
-    m
+        Setupapi.lib
+	${CMAKE_SOURCE_DIR}/libs/SDL2/SDL2main.lib
+	${CMAKE_SOURCE_DIR}/libs/SDL2/SDL2-static.lib
+        msvcrtd.lib
+        winmm.lib
+        imm32.lib
+        version.lib
 )
