@@ -44,9 +44,7 @@ class Sphere final : public Object
     glm::vec3 _center;
 
   public:
-
     Sphere(const glm::vec3 &c, const f32 r, IlluminationModel *i) : Object(i),  _radius(r), _center(c) {}
-    ~Sphere() override = default;
 
     /**
      * Checks for the intersection of an object with the given ray, if there is
@@ -73,15 +71,12 @@ class Polygon final : public Object
     /**
      * Constructor.
      *
-     * @param v: The list of verticies, triangles will be in groups of 3.
+     * @param v: The list of vertices, triangles will be in groups of 3.
      * @param n: The normal for the triangle face.
      */
-    Polygon(std::vector<glm::vec4> v, IlluminationModel *i);
-
-    /**
-     * Destructor.
-     */
-    ~Polygon() override = default;
+    Polygon(std::vector<glm::vec4> &v, IlluminationModel *i) : Object(i), _vertices(std::move(v))
+    {
+    }
 
     /**
      * Checks for the intersection of an object with the given ray, if there is

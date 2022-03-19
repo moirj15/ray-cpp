@@ -1,35 +1,5 @@
 #include "illumination.h"
 
-Light::Light(const glm::vec3 &p, const glm::vec4 &c, const glm::vec4 &a) : position(p), color(c), ambient(a)
-{
-}
-Light::~Light(void)
-{
-}
-
-IlluminationModel::IlluminationModel(f32 ambient_coef, f32 specular_coef, f32 diffuse_coef, f32 specular_exp,
-    f32 reflection_const, f32 refraction_const) :
-        _ambient_coef(ambient_coef),
-        _specular_coef(specular_coef), _diffuse_coef(diffuse_coef), _specular_exp(specular_exp), _reflection_const(reflection_const),
-        _refraction_const(refraction_const)
-{
-}
-Phong::Phong(void) :
-        IlluminationModel(0.0, 0.0, 0.0, 0.0, 0.0, 0.0), ambient_mat(0.0), diffuse_mat(0.0), specular_mat(0.0)
-{
-}
-
-Phong::Phong(
-    f32 a_coef, f32 s_coef, f32 d_coef, f32 s_exp, f32 r_const, f32 t_const, glm::vec4 aM, glm::vec4 dM, glm::vec4 sM) :
-        IlluminationModel(a_coef, s_coef, d_coef, s_exp, r_const, t_const),
-        ambient_mat(aM), diffuse_mat(dM), specular_mat(sM)
-{
-}
-
-Phong::~Phong(void)
-{
-}
-
 glm::vec4 Phong::illuminate(IntersectData &id, const ::Light &light, const glm::vec3 &eyepoint, bool in_shadow) const
 {
     const auto surfToLight = glm::normalize(light.position - id.intersection);
@@ -50,16 +20,6 @@ glm::vec4 Phong::illuminate(IntersectData &id, const ::Light &light, const glm::
     }
 }
 
-CheckerBoard::CheckerBoard(
-    f32 a_coef, f32 s_coef, f32 d_coef, f32 s_exp, f32 r_const, f32 t_const, glm::vec4 &c1, glm::vec4 &c2) :
-        IlluminationModel(a_coef, s_coef, d_coef, s_exp, r_const, t_const),
-        color1(c1), color2(c2)
-{
-}
-
-CheckerBoard::~CheckerBoard(void)
-{
-}
 
 glm::vec4 CheckerBoard::illuminate(
     IntersectData &id, const ::Light &light, const glm::vec3 &eyepoint, bool in_shadow) const

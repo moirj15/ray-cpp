@@ -1,7 +1,11 @@
 #include "bmpIO.h"
-#include <vector>
-#include <SDL2/SDL.h>
 
+#include <SDL2/SDL.h>
+#include <vector>
+#include "camera.h"
+
+namespace bmp
+{
 
 /**
  * Converts a vec4 containing color data to a u32 with the same color data.
@@ -9,13 +13,13 @@
  * @param color: The vector with the color data.
  * @return: The color data as a u32.
  */
-u32 vec4_to_u32(const glm::vec4 color)
+u32 vec4_to_u32(const glm::vec4 &color)
 {
-	u8 red = (u8) (255.0 * color.r);
-	u8 green = (u8) (255.0 * color.g);
-	u8 blue = (u8) (255.0 * color.b);
+    u8 red = (u8)(255.0 * color.r);
+    u8 green = (u8)(255.0 * color.g);
+    u8 blue = (u8)(255.0 * color.b);
 
-	return (0xff << 24) | (blue << 16) | (green << 8) | red;
+    return (0xff << 24) | (blue << 16) | (green << 8) | red;
 }
 
 /**
@@ -24,23 +28,25 @@ u32 vec4_to_u32(const glm::vec4 color)
  * @param file: The file that will be written out.
  * @param image: The image that will be created.
  */
-void writeBMP(const char *file, glm::vec4 *image, u32 width, u32 height)
+void Write(const char *file, const Frame &frame)
 {
-	u32 rmask = 0x000000ff;
-	u32 gmask = 0x0000ff00;
-	u32 bmask = 0x00ff0000;
-	u32 amask = 0xff000000;
+    u32 rmask = 0x000000ff;
+    u32 gmask = 0x0000ff00;
+    u32 bmask = 0x00ff0000;
+    u32 amask = 0xff000000;
 
-    std::vector<u32> data;	
-    for (u32 i = 0; i < width * height; i++) {
-        data.push_back(vec4_to_u32(image[i]));
+    std::vector<u32> data;
+    for (u32 i = 0; i < frame.GetWidth() * frame.GetHeight(); i++) {
+        data.push_back(vec4_to_u32(frame.GetImage()[i]));
     }
 
-	SDL_Surface *surface = SDL_CreateRGBSurfaceFrom((void *)data.data(), width, 
-							height, 32, width * 4, rmask, gmask, bmask, amask);
+    SDL_Surface *surface =
+        SDL_CreateRGBSurfaceFrom((void *)data.data(), frame.GetWidth(), frame.GetHeight(), 32, frame.GetWidth() * 4, rmask, gmask, bmask, amask);
 
-	if (SDL_SaveBMP(surface, file) < 0) {
+    if (SDL_SaveBMP(surface, file) < 0) {
         printf("SDL failed to save file: %s\n", SDL_GetError());
     }
-	SDL_FreeSurface(surface);
+    SDL_FreeSurface(surface);
 }
+
+} // namespace bmp

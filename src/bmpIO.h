@@ -1,15 +1,10 @@
-#ifndef BMPIO_H
-#define BMPIO_H
-
+#pragma once
 #include "utils.h"
 
-/**
- * Converts a vec4 containing color data to a u32 with the same color data.
- *
- * @param color: The vector with the color data.
- * @return: The color data as a u32.
- */
-u32 vec4_to_u32(const glm::vec4 color);
+class Frame;
+
+namespace bmp
+{
 
 /**
  * Writes a bmp file out to the given file name.
@@ -18,6 +13,8 @@ u32 vec4_to_u32(const glm::vec4 color);
  * @param data: The color data that will be stored in the file.
  * @param size: The size of data.
  */
-void writeBMP(const char *file, glm::vec4 *image, u32 width, u32 height);
+void Write(const char *file, const Frame &frame);
 
-#endif
+}
+
+

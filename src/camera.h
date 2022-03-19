@@ -1,82 +1,72 @@
-#ifndef CAMERA_H
-#define CAMERA_H
-#include "utils.h"
-#include "Scene.h"
-#include "intersectData.h"
-#include "illumination.h"
+#pragma once
 
-#define WIDTH 	1080
-#define HEIGHT	720
+#include "illumination.h"
+#include "intersectData.h"
+#include "scene.h"
+#include "utils.h"
+
+#include <glm/gtc/matrix_transform.hpp>
+
+#define WIDTH  1080
+#define HEIGHT 720
 
 #define PIC_SIZE (WIDTH * HEIGHT)
 
-enum TONE_TYPE
+enum TONE_TYPE { WARD, REINHARD };
+class Frame
 {
-	WARD,
-    REINHARD
+    const s32 _width;
+    const s32 _height;
+    std::vector<glm::vec4> _image;
+
+  public:
+    Frame(s32 width, s32 height) : _width(width), _height(height), _image(_width * _height, glm::vec4(0)) {}
+    void SetPixel(s32 x, s32 y, const glm::vec4 &color) { _image[_width * y + x] = color; }
+    void SetPixel(s32 i, const glm::vec4 &color) { _image[i] = color; }
+    [[nodiscard]] glm::vec4 GetPixel(s32 x, s32 y) const { return _image[_width * y + x]; }
+    [[nodiscard]] glm::vec4 GetPixel(s32 i) const { return _image[i]; }
+    [[nodiscard]] s32 GetWidth() const { return _width; }
+    [[nodiscard]] s32 GetHeight() const { return _height; }
+    [[nodiscard]] const std::vector<glm::vec4> &GetImage() const { return _image; }
 };
 
 class Camera
 {
+    glm::vec3 _eyepoint;
+    glm::vec3 _lookAt;
+    glm::vec3 _up;
 
-	glm::vec3 eyepoint;
-	glm::vec3 lookAt;
-	glm::vec3 up;
-
-	f32 filmPlaneWidth;
-	f32 filmPlaneHeight;
-	f32	f;
+    f32 _film_plane_width;
+    f32 _film_plane_height;
+    f32 _f;
 
     const f32 ldmax = 1.0f;
     f32 lmax;
 
-public:
-	glm::mat4 camTransform;
-    glm::vec4 picture[PIC_SIZE];
+    Frame _frame;
 
-    /**
-     *
-     */
-	Camera(void);
+  public:
+    glm::mat4 _camera_transform;
 
-    /**
-     *
-     */
-	Camera(glm::vec3 e, glm::vec3 l, glm::vec3 u, f32 fp_w, f32 fp_h, f32 lm);
+    Camera(glm::vec3 e, glm::vec3 l, glm::vec3 u, f32 fp_w, f32 fp_h, f32 lm) :
+            _eyepoint(e), _lookAt(l), _up(u), _film_plane_width(fp_w), _film_plane_height(fp_h), lmax(lm),
+            _frame(WIDTH, HEIGHT)
+    {
+        _f = _eyepoint.z;
+        _camera_transform = glm::lookAt(_eyepoint, _lookAt, _up);
+    }
 
-    /**
-     *
-     */
-	~Camera(void);
+    void render(const Scene &w);
 
+    s32 intersection(const Scene &world, Ray ray, IntersectData &data, s32 check_obj);
 
-    /**
-     *
-     */
-	void render(const Scene &w);
+    [[nodiscard]] const Frame &GetFrame() const { return _frame; }
 
-    /**
-     *
-     */
-	s32 intersection(const Scene &world, Ray ray, IntersectData &data, s32 check_obj);
-private:
+  private:
+    glm::vec4 calculateLight(const Scene &world, IntersectData &id, const IlluminationModel &i_model,
+        std::vector<Light> lights, s32 obj, u32 depth);
 
-    /**
-     *
-     */
-	glm::vec4 calculateLight(const Scene &world,IntersectData &id, const IlluminationModel &i_model, 
-			std::vector<Light> lights, s32 obj, u32 depth);
+    bool inShadow(const Scene &world, IntersectData &id, Light light, s32 obj);
 
-    /**
-     *
-     */
-	bool inShadow(const Scene &world, IntersectData &id, Light light, s32 obj);
-
-    /**
-     *
-     */
     void tone_rep(TONE_TYPE which_type);
 };
-
-
-#endif

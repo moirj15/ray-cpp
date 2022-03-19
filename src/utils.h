@@ -24,8 +24,6 @@ typedef int8_t		s8;
 typedef float		f32;
 typedef double		f64;
 
-#define db() printf("hit\n");
-
 /**
  * Exits the program with EXIT_FAILURE and prints the given 
  * error message.

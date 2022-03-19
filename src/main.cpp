@@ -3,7 +3,7 @@
 #include "illumination.h"
 #include "object.h"
 #include "utils.h"
-#include "Scene.h"
+#include "scene.h"
 
 #include <cstdio>
 #include <cstdlib>
@@ -45,13 +45,13 @@ int main(int argc, char **argv)
 
     std::vector<glm::vec4> triangles;
 
-    triangles.push_back(glm::vec4(15.8, -1.90, 7.69, 0.0));
-    triangles.push_back(glm::vec4(-4.6, -1.90, 8.69, 0.0));
-    triangles.push_back(glm::vec4(-4.6, -1.90, -18.69, 0.0));
+    triangles.emplace_back(glm::vec4(15.8, -1.90, 7.69, 0.0));
+    triangles.emplace_back(glm::vec4(-4.6, -1.90, 8.69, 0.0));
+    triangles.emplace_back(glm::vec4(-4.6, -1.90, -18.69, 0.0));
 
-    triangles.push_back(glm::vec4(15.8, -1.90, 7.69, 0.0));
-    triangles.push_back(glm::vec4(2.8, -1.90, -19.00, 0.0));
-    triangles.push_back(glm::vec4(-4.6, -1.90, -18.69, 0.0));
+    triangles.emplace_back(glm::vec4(15.8, -1.90, 7.69, 0.0));
+    triangles.emplace_back(glm::vec4(2.8, -1.90, -19.00, 0.0));
+    triangles.emplace_back(glm::vec4(-4.6, -1.90, -18.69, 0.0));
 
     world.objList.push_back(std::make_unique<Polygon>(triangles, &floor_illum));
 
@@ -59,11 +59,12 @@ int main(int argc, char **argv)
 
     auto camera = std::make_unique<Camera>(camera_pos, look_at, up_vec, film_plane_width, film_plane_height, 1.0f);
 
-    world.transform(camera->camTransform);
+    world.transform(camera->_camera_transform);
 
     camera->render(world);
 
-    writeBMP("test.bmp", camera->picture, WIDTH, HEIGHT);
+    const auto &frame = camera->GetFrame();
+    bmp::Write("test.bmp", frame);
     printf("finished\n");
 
     return EXIT_SUCCESS;

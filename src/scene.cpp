@@ -1,16 +1,6 @@
 #include "Scene.h"
 
 
-Scene::Scene(void)
-{
-
-}
-
-Scene::~Scene(void)
-{
-
-}
-
 void Scene::transform(glm::mat4 mat)
 {
     for (const auto &object : objList) {

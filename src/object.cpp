@@ -18,18 +18,18 @@ bool Sphere::Intersect(const Ray &r, IntersectData &id)
 {
     const glm::vec3 &d = r.direction;
     const glm::vec3 &o = r.origin;
-    f32 B = 2.0 * (d.x * (o.x - _center.x) + d.y * (o.y - _center.y) + d.z * (o.z - _center.z));
+    f32 B = 2.0f * (d.x * (o.x - _center.x) + d.y * (o.y - _center.y) + d.z * (o.z - _center.z));
 
-    f32 C = pow(o.x - _center.x, 2) + pow(o.y - _center.y, 2) + pow(o.z - _center.z, 2) - pow(_radius, 2);
+    f32 C = pow(o.x - _center.x, 2.0f) + pow(o.y - _center.y, 2.0f) + pow(o.z - _center.z, 2.0f) - pow(_radius, 2.0f);
 
     // Calculate the value under the square root in the quadratic formula
-    f32 squareRootCheck = pow(B, 2) - (4 * C);
+    f32 squareRootCheck = pow(B, 2.0f) - (4.0f * C);
     if (squareRootCheck < 0.0) {
         return false;
     }
     // Calculate the quadratic formula
-    f32 wAdd = (-B + sqrt(squareRootCheck)) / 2;
-    f32 wSub = (-B - sqrt(squareRootCheck)) / 2;
+    f32 wAdd = (-B + sqrt(squareRootCheck)) / 2.0f;
+    f32 wSub = (-B - sqrt(squareRootCheck)) / 2.0f;
 
     // determine the least square root
     f32 leastPos;
@@ -53,13 +53,9 @@ bool Sphere::Intersect(const Ray &r, IntersectData &id)
 
 void Sphere::Transform(const glm::mat4 &transform)
 {
-    _center = transform * glm::vec4(_center, 1.0);
+    _center = transform * glm::vec4(_center, 1.0f);
 }
 
-Polygon::Polygon(std::vector<glm::vec4> v, IlluminationModel *i) : Object(i), _vertices(v)
-{
-    i_model = i;
-}
 
 /**
  * Checks for the intersection of an object with the given ray, if there is

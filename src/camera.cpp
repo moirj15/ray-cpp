@@ -3,44 +3,27 @@
 #include "bmpIO.h"
 
 #include <cmath>
-#include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtx/string_cast.hpp>
-
-Camera::Camera(void)
-{
-}
-
-Camera::Camera(glm::vec3 e, glm::vec3 l, glm::vec3 u, f32 fp_w, f32 fp_h, f32 lm) :
-        eyepoint(e), lookAt(l), up(u), filmPlaneWidth(fp_w), filmPlaneHeight(fp_h), lmax(lm)
-{
-    f = eyepoint.z;
-    camTransform = glm::lookAt(eyepoint, lookAt, up);
-}
-
-Camera::~Camera(void)
-{
-}
 
 void Camera::render(const Scene &w)
 {
     const auto &objects = w.objList;
-    for (u32 y = 0; y < HEIGHT; y++) {
-        f32 filmPlanY = (filmPlaneHeight / 2) - (y * (filmPlaneHeight / HEIGHT));
-        for (u32 x = 0; x < WIDTH; x++) {
-            f32 filmPlanX = (-filmPlaneWidth / 2) + (x * (filmPlaneWidth / WIDTH));
-            glm::vec4 direction(filmPlanX, filmPlanY, -f, 0.0);
+    for (s32 y = 0; y < HEIGHT; y++) {
+        f32 filmPlanY = (_film_plane_height / 2) - (y * (_film_plane_height / HEIGHT));
+        for (s32 x = 0; x < WIDTH; x++) {
+            f32 filmPlanX = (-_film_plane_width / 2) + (x * (_film_plane_width / WIDTH));
+            glm::vec4 direction(filmPlanX, filmPlanY, -_f, 0.0);
 
-            Ray r(glm::normalize(glm::vec4(eyepoint, 1.0)), glm::normalize(direction));
+            Ray r(glm::normalize(glm::vec4(_eyepoint, 1.0)), glm::normalize(direction));
 
             IntersectData data;
             s32 obj = intersection(w, r, data, -1);
 
             if (obj == -1) {
-                picture[WIDTH * y + x] = glm::vec4(0.0f, 0.0f, 1.0f, 1.0f) * lmax; // 0xffff0000;
+                _frame.SetPixel(x, y, glm::vec4(0.0f, 0.0f, 1.0f, 1.0f) * lmax);
             } else {
                 glm::vec4 color = calculateLight(w, data, objects[obj]->GetIlluminationModel(), w.lightList, obj, 1);
-
-                picture[WIDTH * y + x] = color * lmax;
+                _frame.SetPixel(x, y, color * lmax);
             }
         }
     }
@@ -59,7 +42,7 @@ s32 Camera::intersection(const Scene &world, Ray ray, IntersectData &data, s32 c
         IntersectData curr_data;
 
         if (objects[i]->Intersect(ray, curr_data)) {
-            test_distance = glm::distance(eyepoint, curr_data.intersection);
+            test_distance = glm::distance(_eyepoint, curr_data.intersection);
             if ((check_obj > -1) && (i == (u64)check_obj)) {
                 continue;
             }
@@ -75,21 +58,21 @@ s32 Camera::intersection(const Scene &world, Ray ray, IntersectData &data, s32 c
 }
 
 #define MAX_DEPTH 4
-static const f32 refract_air = 1.0;
-static const f32 refract_glass = 1.1;
+static const f32 refract_air = 1.0f;
+static const f32 refract_glass = 1.1f;
 
-glm::vec4 Camera::calculateLight(const Scene &world,
-    IntersectData &id, const IlluminationModel &i_model, std::vector<Light> lights, s32 obj, u32 depth)
+glm::vec4 Camera::calculateLight(const Scene &world, IntersectData &id, const IlluminationModel &i_model,
+    std::vector<Light> lights, s32 obj, u32 depth)
 {
     glm::vec4 color(0.0);
     for (u64 i = 0; i < lights.size(); i++) {
         Light &light = lights[i];
 
-        color += i_model.illuminate(id, light, eyepoint, inShadow(world, id, light, obj));
+        color += i_model.illuminate(id, light, _eyepoint, inShadow(world, id, light, obj));
 
         if (depth < MAX_DEPTH) {
             if (i_model._reflection_const > 0.0) {
-                const auto surfToLight = glm::normalize(eyepoint - id.intersection);
+                const auto surfToLight = glm::normalize(_eyepoint - id.intersection);
                 const auto reflectionVec = glm::normalize(-glm::reflect(surfToLight, id.normal));
                 Ray ray(id.intersection, reflectionVec);
                 IntersectData data;
@@ -97,7 +80,8 @@ glm::vec4 Camera::calculateLight(const Scene &world,
 
                 if (hit_obj > -1) {
                     color += i_model._reflection_const
-                             * calculateLight(world, data, world.objList[hit_obj]->GetIlluminationModel(), lights, hit_obj, depth + 1);
+                             * calculateLight(world, data, world.objList[hit_obj]->GetIlluminationModel(), lights,
+                                 hit_obj, depth + 1);
                 } else {
                     color += i_model._reflection_const * glm::vec4(0.0, 0.0, 1.0, 0.0);
                 }
@@ -134,7 +118,8 @@ glm::vec4 Camera::calculateLight(const Scene &world,
                 s32 hit_obj = intersection(world, transmission, data, -1);
                 if (hit_obj > -1) {
                     color += i_model._refraction_const
-                             * calculateLight(world, data, world.objList[hit_obj]->GetIlluminationModel(), lights, hit_obj, depth + 1);
+                             * calculateLight(world, data, world.objList[hit_obj]->GetIlluminationModel(), lights,
+                                 hit_obj, depth + 1);
                 } else {
                     color += i_model._refraction_const * glm::vec4(0.0, 0.0, 1.0, 0.0);
                 }
@@ -168,7 +153,8 @@ void Camera::tone_rep(TONE_TYPE which_type)
 {
     f32 log_avg_luminance = 0.0f;
     for (u64 i = 0; i < PIC_SIZE; i++) {
-        log_avg_luminance += log(0.1f + 0.27f * picture[i].r + 0.67f * picture[i].g + 0.06f * picture[i].b);
+        auto pixel = _frame.GetPixel(i);
+        log_avg_luminance += log(0.1f + 0.27f * pixel.r + 0.67f * pixel.g + 0.06f * pixel.b);
     }
     log_avg_luminance /= PIC_SIZE;
     log_avg_luminance = exp(log_avg_luminance);
@@ -177,22 +163,24 @@ void Camera::tone_rep(TONE_TYPE which_type)
         f32 world_illum = log_avg_luminance;
         printf("%f\n", world_illum);
         f32 sf = powf((1.219f + powf(ldmax / 2.0f, 0.4f)) / (1.219f + powf(world_illum, 0.4f)), 2.5f);
-        for (u64 i = 0; i < PIC_SIZE; i++) {
-            picture[i] *= sf;
-            picture[i].r /= ldmax;
-            picture[i].g /= ldmax;
-            picture[i].b /= ldmax;
-            picture[i] = glm::clamp(picture[i], glm::vec4(0.0f), glm::vec4(1.0f));
+        for (s32 i = 0; i < PIC_SIZE; i++) {
+            auto pixel = _frame.GetPixel(i);
+            pixel *= sf;
+            pixel.r /= ldmax;
+            pixel.g /= ldmax;
+            pixel.b /= ldmax;
+            _frame.SetPixel(i, glm::clamp(pixel, glm::vec4(0.0f), glm::vec4(1.0f)));
         }
     } else if (which_type == REINHARD) {
-        f32 a = 0.18;
-        for (u64 i = 0; i < PIC_SIZE; i++) {
-            picture[i] *= a / log_avg_luminance;
-            picture[i].r /= 1.0f + picture[i].r;
-            picture[i].g /= 1.0f + picture[i].g;
-            picture[i].b /= 1.0f + picture[i].b;
-            // picture[i] *= ldmax;
-            picture[i] = glm::clamp(picture[i], glm::vec4(0.0f), glm::vec4(1.0f));
+        f32 a = 0.18f;
+        for (s32 i = 0; i < PIC_SIZE; i++) {
+            auto pixel = _frame.GetPixel(i);
+            pixel *= a / log_avg_luminance;
+            pixel.r /= 1.0f + pixel.r;
+            pixel.g /= 1.0f + pixel.g;
+            pixel.b /= 1.0f + pixel.b;
+            // _picture[i] *= ldmax;
+            _frame.SetPixel(i, glm::clamp(pixel, glm::vec4(0.0f), glm::vec4(1.0f)));
         }
     }
 }
