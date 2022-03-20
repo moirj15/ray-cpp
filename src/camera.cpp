@@ -5,7 +5,7 @@
 #include <cmath>
 #include <glm/gtx/string_cast.hpp>
 
-void Camera::render(const Scene &w)
+void Camera::Render(const Scene &w)
 {
     const auto &objects = w.objList;
     for (s32 y = 0; y < HEIGHT; y++) {
@@ -17,12 +17,12 @@ void Camera::render(const Scene &w)
             Ray r(glm::normalize(glm::vec4(_eyepoint, 1.0)), glm::normalize(direction));
 
             IntersectData data;
-            s32 obj = intersection(w, r, data, -1);
+            s32 obj = Intersection(w, r, data, -1);
 
             if (obj == -1) {
                 _frame.SetPixel(x, y, glm::vec4(0.0f, 0.0f, 1.0f, 1.0f) * lmax);
             } else {
-                glm::vec4 color = calculateLight(w, data, objects[obj]->GetIlluminationModel(), w.lightList, obj, 1);
+                glm::vec4 color = CalculateLight(w, data, objects[obj]->GetIlluminationModel(), w.lightList, obj, 1);
                 _frame.SetPixel(x, y, color * lmax);
             }
         }
@@ -30,7 +30,7 @@ void Camera::render(const Scene &w)
     tone_rep(REINHARD);
 }
 
-s32 Camera::intersection(const Scene &world, Ray ray, IntersectData &data, s32 check_obj)
+s32 Camera::Intersection(const Scene &world, Ray ray, IntersectData &data, s32 check_obj)
 {
     const auto &objects = world.objList;
     IntersectData closest_data;
@@ -61,7 +61,7 @@ s32 Camera::intersection(const Scene &world, Ray ray, IntersectData &data, s32 c
 static const f32 refract_air = 1.0f;
 static const f32 refract_glass = 1.1f;
 
-glm::vec4 Camera::calculateLight(const Scene &world, IntersectData &id, const IlluminationModel &i_model,
+glm::vec4 Camera::CalculateLight(const Scene &world, IntersectData &id, const IlluminationModel &i_model,
     std::vector<Light> lights, s32 obj, u32 depth)
 {
     glm::vec4 color(0.0);
@@ -76,11 +76,11 @@ glm::vec4 Camera::calculateLight(const Scene &world, IntersectData &id, const Il
                 const auto reflectionVec = glm::normalize(-glm::reflect(surfToLight, id.normal));
                 Ray ray(id.intersection, reflectionVec);
                 IntersectData data;
-                s32 hit_obj = intersection(world, ray, data, obj);
+                s32 hit_obj = Intersection(world, ray, data, obj);
 
                 if (hit_obj > -1) {
                     color += i_model._reflection_const
-                             * calculateLight(world, data, world.objList[hit_obj]->GetIlluminationModel(), lights,
+                             * CalculateLight(world, data, world.objList[hit_obj]->GetIlluminationModel(), lights,
                                  hit_obj, depth + 1);
                 } else {
                     color += i_model._reflection_const * glm::vec4(0.0, 0.0, 1.0, 0.0);
@@ -115,10 +115,10 @@ glm::vec4 Camera::calculateLight(const Scene &world, IntersectData &id, const Il
 
                 Ray transmission(id.intersection + (0.1f * normal), direction);
                 IntersectData data;
-                s32 hit_obj = intersection(world, transmission, data, -1);
+                s32 hit_obj = Intersection(world, transmission, data, -1);
                 if (hit_obj > -1) {
                     color += i_model._refraction_const
-                             * calculateLight(world, data, world.objList[hit_obj]->GetIlluminationModel(), lights,
+                             * CalculateLight(world, data, world.objList[hit_obj]->GetIlluminationModel(), lights,
                                  hit_obj, depth + 1);
                 } else {
                     color += i_model._refraction_const * glm::vec4(0.0, 0.0, 1.0, 0.0);

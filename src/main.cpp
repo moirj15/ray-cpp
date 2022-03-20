@@ -59,9 +59,9 @@ int main(int argc, char **argv)
 
     auto camera = std::make_unique<Camera>(camera_pos, look_at, up_vec, film_plane_width, film_plane_height, 1.0f);
 
-    world.transform(camera->_camera_transform);
+    world.transform(camera->GetCameraTransform());
 
-    camera->render(world);
+    camera->Render(world);
 
     const auto &frame = camera->GetFrame();
     bmp::Write("test.bmp", frame);

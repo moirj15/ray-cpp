@@ -22,15 +22,15 @@ public:
     virtual ~Object() = default;
 
     /**
-     * Checks for the intersection of an object with the given ray, if there is
-     * an intersection then the params intersection and normal will have their
+     * Checks for the Intersection of an object with the given ray, if there is
+     * an intersection then the params Intersection and normal will have their
      * contents modified.
      *
-     * @param r: The ray that will be checked for intersection.
+     * @param r: The ray that will be checked for Intersection.
      * @param intersection: The reference to the vector that will hold the
-     * intersection point if there is an intersection.
+     * intersection point if there is an Intersection.
      * @param normal: The reference to the vector that will hold the surface
-     * normal if there is an intersection.
+     * normal if there is an Intersection.
      * @return: True if the object was intersected, false otherwise.
      */
     virtual bool Intersect(const Ray &r, IntersectData &id) = 0;
@@ -47,15 +47,15 @@ class Sphere final : public Object
     Sphere(const glm::vec3 &c, const f32 r, IlluminationModel *i) : Object(i),  _radius(r), _center(c) {}
 
     /**
-     * Checks for the intersection of an object with the given ray, if there is
-     * an intersection then the params intersection and normal will have their
+     * Checks for the Intersection of an object with the given ray, if there is
+     * an intersection then the params Intersection and normal will have their
      * contents modified.
      *
-     * @param r: The ray that will be checked for intersection.
+     * @param r: The ray that will be checked for Intersection.
      * @param intersection: The reference to the vector that will hold the
-     * intersection point if there is an intersection.
+     * intersection point if there is an Intersection.
      * @param normal: The reference to the vector that will hold the surface
-     * normal if there is an intersection.
+     * normal if there is an Intersection.
      * @return: True if the object was intersected, false otherwise.
      */
     bool Intersect(const Ray &r, IntersectData &id) override;
@@ -79,15 +79,15 @@ class Polygon final : public Object
     }
 
     /**
-     * Checks for the intersection of an object with the given ray, if there is
-     * an intersection then the params intersection and normal will have their
+     * Checks for the Intersection of an object with the given ray, if there is
+     * an intersection then the params Intersection and normal will have their
      * contents modified.
      *
-     * @param r: The ray that will be checked for intersection.
+     * @param r: The ray that will be checked for Intersection.
      * @param intersection: The reference to the vector that will hold the
-     * intersection point if there is an intersection.
+     * Intersection point if there is an intersection.
      * @param normal: The reference to the vector that will hold the surface
-     * normal if there is an intersection.
+     * normal if there is an Intersection.
      * @return: True if the object was intersected, false otherwise.
      */
     bool Intersect(const Ray &r, IntersectData &id) override;

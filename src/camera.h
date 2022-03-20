@@ -44,26 +44,24 @@ class Camera
     f32 lmax;
 
     Frame _frame;
-
-  public:
     glm::mat4 _camera_transform;
 
+  public:
     Camera(glm::vec3 e, glm::vec3 l, glm::vec3 u, f32 fp_w, f32 fp_h, f32 lm) :
-            _eyepoint(e), _lookAt(l), _up(u), _film_plane_width(fp_w), _film_plane_height(fp_h), lmax(lm),
-            _frame(WIDTH, HEIGHT)
+            _eyepoint(e), _lookAt(l), _up(u), _film_plane_width(fp_w), _film_plane_height(fp_h), _f(_eyepoint.z),
+            lmax(lm), _frame(WIDTH, HEIGHT), _camera_transform(glm::lookAt(_eyepoint, _lookAt, _up))
     {
-        _f = _eyepoint.z;
-        _camera_transform = glm::lookAt(_eyepoint, _lookAt, _up);
     }
 
-    void render(const Scene &w);
+    void Render(const Scene &w);
 
-    s32 intersection(const Scene &world, Ray ray, IntersectData &data, s32 check_obj);
+    s32 Intersection(const Scene &world, Ray ray, IntersectData &data, s32 check_obj);
 
     [[nodiscard]] const Frame &GetFrame() const { return _frame; }
+    [[nodiscard]] glm::mat4 GetCameraTransform() const { return _camera_transform; }
 
   private:
-    glm::vec4 calculateLight(const Scene &world, IntersectData &id, const IlluminationModel &i_model,
+    glm::vec4 CalculateLight(const Scene &world, IntersectData &id, const IlluminationModel &i_model,
         std::vector<Light> lights, s32 obj, u32 depth);
 
     bool inShadow(const Scene &world, IntersectData &id, Light light, s32 obj);

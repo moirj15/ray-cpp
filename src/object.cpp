@@ -3,15 +3,15 @@
 #include <glm/gtx/projection.hpp>
 
 /**
- * Checks for the intersection of an object with the given ray, if there is
- * an intersection then the params intersection and normal will have their
+ * Checks for the Intersection of an object with the given ray, if there is
+ * an intersection then the params Intersection and normal will have their
  * contents modified.
  *
- * @param r: The ray that will be checked for intersection.
+ * @param r: The ray that will be checked for Intersection.
  * @param intersection: The reference to the vector that will hold the
- * intersection point if there is an intersection.
+ * intersection point if there is an Intersection.
  * @param normal: The reference to the vector that will hold the surface
- * normal if there is an intersection.
+ * normal if there is an Intersection.
  * @return: True if the object was intersected, false otherwise.
  */
 bool Sphere::Intersect(const Ray &r, IntersectData &id)
@@ -58,15 +58,15 @@ void Sphere::Transform(const glm::mat4 &transform)
 
 
 /**
- * Checks for the intersection of an object with the given ray, if there is
- * an intersection then the params intersection and normal will have their
+ * Checks for the Intersection of an object with the given ray, if there is
+ * an Intersection then the params intersection and normal will have their
  * contents modified.
  *
- * @param r: The ray that will be checked for intersection.
+ * @param r: The ray that will be checked for Intersection.
  * @param intersection: The reference to the vector that will hold the
- * intersection point if there is an intersection.
+ * intersection point if there is an Intersection.
  * @param normal: The reference to the vector that will hold the surface
- * normal if there is an intersection.
+ * normal if there is an Intersection.
  * @return: True if the object was intersected, false otherwise.
  */
 bool Polygon::Intersect(const Ray &r, IntersectData &id)
