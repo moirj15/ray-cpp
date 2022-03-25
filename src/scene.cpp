@@ -1,5 +1,10 @@
-#include "Scene.h"
+#include "scene.h"
+#include "intersectData.h"
+#include "ray.h"
 
+Object *Scene::CastRay(const Ray &ray, IntersectData &data, s32 check_obj) const
+{
+}
 
 void Scene::transform(glm::mat4 mat)
 {

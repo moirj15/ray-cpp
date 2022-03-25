@@ -7,23 +7,22 @@
 
 void Camera::Render(const Scene &w)
 {
-    const auto &objects = w.objList;
     for (s32 y = 0; y < HEIGHT; y++) {
-        f32 filmPlanY = (_film_plane_height / 2) - (y * (_film_plane_height / HEIGHT));
+        f32 filmPlanY = (_film_plane_height / 2) - (static_cast<f32>(y) * (_film_plane_height / HEIGHT));
         for (s32 x = 0; x < WIDTH; x++) {
-            f32 filmPlanX = (-_film_plane_width / 2) + (x * (_film_plane_width / WIDTH));
+            f32 filmPlanX = (-_film_plane_width / 2) + (static_cast<f32>(x) * (_film_plane_width / WIDTH));
             glm::vec4 direction(filmPlanX, filmPlanY, -_f, 0.0);
 
             Ray r(glm::normalize(glm::vec4(_eyepoint, 1.0)), glm::normalize(direction));
 
             IntersectData data;
-            s32 obj = Intersection(w, r, data, -1);
+            auto *object = w.CastRay(r, data, -1);
 
-            if (obj == -1) {
-                _frame.SetPixel(x, y, glm::vec4(0.0f, 0.0f, 1.0f, 1.0f) * lmax);
-            } else {
-                glm::vec4 color = CalculateLight(w, data, objects[obj]->GetIlluminationModel(), w.lightList, obj, 1);
+            if (object) {
+                glm::vec4 color = CalculateLight(w, data, object->GetIlluminationModel(), w.lightList, obj, 1);
                 _frame.SetPixel(x, y, color * lmax);
+            } else {
+                _frame.SetPixel(x, y, glm::vec4(0.0f, 0.0f, 1.0f, 1.0f) * lmax);
             }
         }
     }
