@@ -31,7 +31,7 @@ int main(int argc, char **argv)
     printf("start\n");
     Scene world;
 
-    world.lightList.push_back(light);
+    world.AddLight(light);
 
     Phong sphere_illum1(0.0f, 0.5f, 0.5f, 70.0f, 0.0f, 0.8f, ambient_mat, diffuse_mat, specular_mat);
     Phong sphere_illum2(0.0f, 0.5f, 0.5f, 70.0f, 0.5f, 0.0f, ambient_mat, diffuse_mat, specular_mat);
@@ -41,7 +41,7 @@ int main(int argc, char **argv)
 
     CheckerBoard floor_illum(0.5, 0.5, 0.5, 70.0, 0.0, 0.0, color1, color2);
 
-    world.objList.push_back(std::make_unique<Sphere>(glm::vec4(1.49f, -1.31f, 5.70f, 1.0f), 1.00f, &sphere_illum1));
+    world.AddObject(new Sphere(glm::vec4(1.49f, -1.31f, 5.70f, 1.0f), 1.00f, &sphere_illum1));
 
     std::vector<glm::vec4> triangles;
 
@@ -53,7 +53,7 @@ int main(int argc, char **argv)
     triangles.emplace_back(glm::vec4(2.8, -1.90, -19.00, 0.0));
     triangles.emplace_back(glm::vec4(-4.6, -1.90, -18.69, 0.0));
 
-    world.objList.push_back(std::make_unique<Polygon>(triangles, &floor_illum));
+    world.AddObject(new Polygon(triangles, &floor_illum));
 
     //world.objList.push_back(std::make_unique<Sphere>(glm::vec4(2.93, -2.00, 4.21, 1.0), 0.8, &sphere_illum2));
 

@@ -33,7 +33,7 @@ public:
      * normal if there is an Intersection.
      * @return: True if the object was intersected, false otherwise.
      */
-    virtual bool Intersect(const Ray &r, IntersectData &id) = 0;
+    virtual bool Intersect(const Ray &r, IntersectData &id) const = 0;
     virtual void Transform(const glm::mat4 &transform) = 0;
     [[nodiscard]] const IlluminationModel &GetIlluminationModel() const { return *i_model; }
 };
@@ -58,7 +58,7 @@ class Sphere final : public Object
      * normal if there is an Intersection.
      * @return: True if the object was intersected, false otherwise.
      */
-    bool Intersect(const Ray &r, IntersectData &id) override;
+    bool Intersect(const Ray &r, IntersectData &id) const override;
     void Transform(const glm::mat4 &transform) override;
 };
 
@@ -90,6 +90,6 @@ class Polygon final : public Object
      * normal if there is an Intersection.
      * @return: True if the object was intersected, false otherwise.
      */
-    bool Intersect(const Ray &r, IntersectData &id) override;
+    bool Intersect(const Ray &r, IntersectData &id) const override;
     void Transform(const glm::mat4 &transform) override;
 };

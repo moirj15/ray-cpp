@@ -5,7 +5,7 @@
 #include <cmath>
 #include <glm/gtx/string_cast.hpp>
 
-void Camera::Render(const Scene &w)
+void Camera::Render(const Scene &scene)
 {
     for (s32 y = 0; y < HEIGHT; y++) {
         f32 filmPlanY = (_film_plane_height / 2) - (static_cast<f32>(y) * (_film_plane_height / HEIGHT));
@@ -16,10 +16,11 @@ void Camera::Render(const Scene &w)
             Ray r(glm::normalize(glm::vec4(_eyepoint, 1.0)), glm::normalize(direction));
 
             IntersectData data;
-            auto *object = w.CastRay(r, data, -1);
+            auto *object = scene.CastRay(r, data, -1);
 
             if (object) {
-                glm::vec4 color = CalculateLight(w, data, object->GetIlluminationModel(), w.lightList, obj, 1);
+                s32 obj = -1;
+                glm::vec4 color = CalculateLight(scene, data, object->GetIlluminationModel(), scene.GetLights(), obj, 1);
                 _frame.SetPixel(x, y, color * lmax);
             } else {
                 _frame.SetPixel(x, y, glm::vec4(0.0f, 0.0f, 1.0f, 1.0f) * lmax);
@@ -29,6 +30,7 @@ void Camera::Render(const Scene &w)
     tone_rep(REINHARD);
 }
 
+#if 0
 s32 Camera::Intersection(const Scene &world, Ray ray, IntersectData &data, s32 check_obj)
 {
     const auto &objects = world.objList;
@@ -55,19 +57,22 @@ s32 Camera::Intersection(const Scene &world, Ray ray, IntersectData &data, s32 c
     data = closest_data;
     return obj;
 }
+#endif
 
 #define MAX_DEPTH 4
 static const f32 refract_air = 1.0f;
 static const f32 refract_glass = 1.1f;
 
-glm::vec4 Camera::CalculateLight(const Scene &world, IntersectData &id, const IlluminationModel &i_model,
+glm::vec4 Camera::CalculateLight(const Scene &scene, IntersectData &id, const IlluminationModel &i_model,
     std::vector<Light> lights, s32 obj, u32 depth)
 {
+    glm::vec4 color(1.0);
+#if 0
     glm::vec4 color(0.0);
     for (u64 i = 0; i < lights.size(); i++) {
         Light &light = lights[i];
 
-        color += i_model.illuminate(id, light, _eyepoint, inShadow(world, id, light, obj));
+        color += i_model.illuminate(id, light, _eyepoint, inShadow(scene, id, light, obj));
 
         if (depth < MAX_DEPTH) {
             if (i_model._reflection_const > 0.0) {
@@ -75,11 +80,11 @@ glm::vec4 Camera::CalculateLight(const Scene &world, IntersectData &id, const Il
                 const auto reflectionVec = glm::normalize(-glm::reflect(surfToLight, id.normal));
                 Ray ray(id.intersection, reflectionVec);
                 IntersectData data;
-                s32 hit_obj = Intersection(world, ray, data, obj);
+                s32 hit_obj = scene.CastRay(scene, ray, data, obj);
 
                 if (hit_obj > -1) {
                     color += i_model._reflection_const
-                             * CalculateLight(world, data, world.objList[hit_obj]->GetIlluminationModel(), lights,
+                             * CalculateLight(scene, data, scene.objList[hit_obj]->GetIlluminationModel(), lights,
                                  hit_obj, depth + 1);
                 } else {
                     color += i_model._reflection_const * glm::vec4(0.0, 0.0, 1.0, 0.0);
@@ -114,10 +119,10 @@ glm::vec4 Camera::CalculateLight(const Scene &world, IntersectData &id, const Il
 
                 Ray transmission(id.intersection + (0.1f * normal), direction);
                 IntersectData data;
-                s32 hit_obj = Intersection(world, transmission, data, -1);
+                s32 hit_obj = Intersection(scene, transmission, data, -1);
                 if (hit_obj > -1) {
                     color += i_model._refraction_const
-                             * CalculateLight(world, data, world.objList[hit_obj]->GetIlluminationModel(), lights,
+                             * CalculateLight(scene, data, scene.objList[hit_obj]->GetIlluminationModel(), lights,
                                  hit_obj, depth + 1);
                 } else {
                     color += i_model._refraction_const * glm::vec4(0.0, 0.0, 1.0, 0.0);
@@ -125,6 +130,7 @@ glm::vec4 Camera::CalculateLight(const Scene &world, IntersectData &id, const Il
             }
         }
     }
+#endif
 
     return color;
 }
@@ -135,6 +141,7 @@ bool Camera::inShadow(const Scene &world, IntersectData &id, Light light, s32 ob
     r.direction = glm::normalize(light.position - id.intersection);
     r.origin = id.intersection;
 
+#if 0
     const auto &objects = world.objList;
     IntersectData dummy;
     for (u64 i = 0; i < objects.size(); i++) {
@@ -145,7 +152,9 @@ bool Camera::inShadow(const Scene &world, IntersectData &id, Light light, s32 ob
             return true;
         }
     }
+#endif
     return false;
+
 }
 
 void Camera::tone_rep(TONE_TYPE which_type)

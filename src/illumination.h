@@ -34,8 +34,8 @@ class IlluminationModel
     }
     virtual ~IlluminationModel() = default;
 
-    virtual glm::vec4 illuminate(
-        IntersectData &id, const Light &light, const glm::vec3 &eyepoint, bool in_shadow) const = 0;
+    [[nodiscard]] virtual glm::vec4 illuminate(
+        const IntersectData &id, const Light &light, const glm::vec3 &eyepoint, bool in_shadow) const = 0;
 };
 
 class Phong : public IlluminationModel
@@ -52,8 +52,8 @@ class Phong : public IlluminationModel
     {
     }
 
-    glm::vec4 illuminate(
-        IntersectData &id, const ::Light &light, const glm::vec3 &eyepoint, bool in_shadow) const override;
+    [[nodiscard]] glm::vec4 illuminate(
+        const IntersectData &id, const ::Light &light, const glm::vec3 &eyepoint, bool in_shadow) const override;
 };
 
 class CheckerBoard : public IlluminationModel
@@ -69,9 +69,9 @@ class CheckerBoard : public IlluminationModel
     {
     }
 
-    glm::vec4 illuminate(
-        IntersectData &id, const ::Light &light, const glm::vec3 &eyepoint, bool in_shadow) const override;
+    [[nodiscard]] glm::vec4 illuminate(
+        const IntersectData &id, const ::Light &light, const glm::vec3 &eyepoint, bool in_shadow) const override;
 
   private:
-    glm::vec4 get_cube(IntersectData &id) const;
+    glm::vec4 get_cube(const IntersectData &id) const;
 };

@@ -5,10 +5,10 @@
 #include "utils.h"
 
 struct IntersectData {
-    glm::vec3 intersection;
-    glm::vec3 normal;
-    f32 u_coord;
-    f32 v_coord;
+    glm::vec3 intersection{0, 0, 0};
+    glm::vec3 normal{0, 0, 0};
+    f32 u_coord = 0.0f;
+    f32 v_coord = 0.0f;
     glm::vec4 triangle_points[3];
     Ray ray;
 

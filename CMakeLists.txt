@@ -22,7 +22,6 @@ add_executable(
 	"src/intersectData.cpp"
 	"src/intersectData.h"
 	"src/ray.h"
-	"src/ray.cpp"
 )
 
 target_include_directories(rayTracer

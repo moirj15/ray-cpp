@@ -53,15 +53,15 @@ class Camera
     {
     }
 
-    void Render(const Scene &w);
+    void Render(const Scene &scene);
 
-    s32 Intersection(const Scene &world, Ray ray, IntersectData &data, s32 check_obj);
+//    s32 Intersection(const Scene &world, Ray ray, IntersectData &data, s32 check_obj);
 
     [[nodiscard]] const Frame &GetFrame() const { return _frame; }
     [[nodiscard]] glm::mat4 GetCameraTransform() const { return _camera_transform; }
 
   private:
-    glm::vec4 CalculateLight(const Scene &world, IntersectData &id, const IlluminationModel &i_model,
+    glm::vec4 CalculateLight(const Scene &scene, IntersectData &id, const IlluminationModel &i_model,
         std::vector<Light> lights, s32 obj, u32 depth);
 
     bool inShadow(const Scene &world, IntersectData &id, Light light, s32 obj);

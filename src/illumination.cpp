@@ -1,6 +1,7 @@
 #include "illumination.h"
 
-glm::vec4 Phong::illuminate(IntersectData &id, const ::Light &light, const glm::vec3 &eyepoint, bool in_shadow) const
+glm::vec4 Phong::illuminate(
+    const IntersectData &id, const ::Light &light, const glm::vec3 &eyepoint, bool in_shadow) const
 {
     const auto surfToLight = glm::normalize(light.position - id.intersection);
     const auto viewVec = glm::normalize(-id.ray.direction);
@@ -22,7 +23,7 @@ glm::vec4 Phong::illuminate(IntersectData &id, const ::Light &light, const glm::
 
 
 glm::vec4 CheckerBoard::illuminate(
-    IntersectData &id, const ::Light &light, const glm::vec3 &eyepoint, bool in_shadow) const
+    const IntersectData &id, const ::Light &light, const glm::vec3 &eyepoint, bool in_shadow) const
 {
     const auto surfToLight = glm::normalize(light.position - id.intersection);
     const auto viewVec = glm::normalize(eyepoint - id.intersection);
@@ -44,7 +45,7 @@ glm::vec4 CheckerBoard::illuminate(
     }
 }
 
-glm::vec4 CheckerBoard::get_cube(IntersectData &id) const
+glm::vec4 CheckerBoard::get_cube(const IntersectData &id) const
 {
     f32 u_barry = id.u_coord;
     f32 v_barry = id.v_coord;

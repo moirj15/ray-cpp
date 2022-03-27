@@ -14,7 +14,7 @@
  * normal if there is an Intersection.
  * @return: True if the object was intersected, false otherwise.
  */
-bool Sphere::Intersect(const Ray &r, IntersectData &id)
+bool Sphere::Intersect(const Ray &r, IntersectData &id) const
 {
     const glm::vec3 &d = r.direction;
     const glm::vec3 &o = r.origin;
@@ -69,7 +69,7 @@ void Sphere::Transform(const glm::mat4 &transform)
  * normal if there is an Intersection.
  * @return: True if the object was intersected, false otherwise.
  */
-bool Polygon::Intersect(const Ray &r, IntersectData &id)
+bool Polygon::Intersect(const Ray &r, IntersectData &id) const
 {
     for (u64 i = 0; i < _vertices.size(); i += 3) {
         // The _vertices of the triangle
