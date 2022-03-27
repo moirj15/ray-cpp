@@ -66,8 +66,8 @@ static const f32 refract_glass = 1.1f;
 glm::vec4 Camera::CalculateLight(const Scene &scene, IntersectData &id, const IlluminationModel &i_model,
     std::vector<Light> lights, s32 obj, u32 depth)
 {
-    glm::vec4 color(1.0);
-#if 0
+//    glm::vec4 color(1.0);
+//#if 0
     glm::vec4 color(0.0);
     for (u64 i = 0; i < lights.size(); i++) {
         Light &light = lights[i];
@@ -130,7 +130,7 @@ glm::vec4 Camera::CalculateLight(const Scene &scene, IntersectData &id, const Il
             }
         }
     }
-#endif
+//#endif
 
     return color;
 }
