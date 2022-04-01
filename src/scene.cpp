@@ -10,7 +10,7 @@ Object *Scene::CastRay(const Ray &ray, IntersectData &data, s32 check_obj) const
     f32 test_distance;
     s32 obj = -1;
     Object *hit = nullptr;
-    for (const auto &object : objList) {
+    for (const auto &object : _objects) {
 
         IntersectData curr_data;
 
@@ -31,12 +31,12 @@ Object *Scene::CastRay(const Ray &ray, IntersectData &data, s32 check_obj) const
     return hit;
 }
 
-void Scene::transform(glm::mat4 mat)
+void Scene::Transform(glm::mat4 mat)
 {
-    for (const auto &object : objList) {
+    for (const auto &object : _objects) {
         object->Transform(mat);
     }
-    for (u64 l = 0; l < lightList.size(); l++) {
-        lightList[l].position = mat * glm::vec4(lightList[l].position, 1.0);
+    for (u64 l = 0; l < _lights.size(); l++) {
+        _lights[l].position = mat * glm::vec4(_lights[l].position, 1.0);
     }
 }

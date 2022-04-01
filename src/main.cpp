@@ -59,7 +59,7 @@ int main(int argc, char **argv)
 
     auto camera = std::make_unique<Camera>(camera_pos, look_at, up_vec, film_plane_width, film_plane_height, 1.0f);
 
-    world.transform(camera->GetCameraTransform());
+    world.Transform(camera->GetCameraTransform());
 
     camera->Render(world);
 

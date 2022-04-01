@@ -84,7 +84,7 @@ glm::vec4 Camera::CalculateLight(const Scene &scene, IntersectData &id, const Il
 
                 if (hit_obj > -1) {
                     color += i_model._reflection_const
-                             * CalculateLight(scene, data, scene.objList[hit_obj]->GetIlluminationModel(), lights,
+                             * CalculateLight(scene, data, scene._objects[hit_obj]->GetIlluminationModel(), lights,
                                  hit_obj, depth + 1);
                 } else {
                     color += i_model._reflection_const * glm::vec4(0.0, 0.0, 1.0, 0.0);
@@ -122,7 +122,7 @@ glm::vec4 Camera::CalculateLight(const Scene &scene, IntersectData &id, const Il
                 s32 hit_obj = Intersection(scene, transmission, data, -1);
                 if (hit_obj > -1) {
                     color += i_model._refraction_const
-                             * CalculateLight(scene, data, scene.objList[hit_obj]->GetIlluminationModel(), lights,
+                             * CalculateLight(scene, data, scene._objects[hit_obj]->GetIlluminationModel(), lights,
                                  hit_obj, depth + 1);
                 } else {
                     color += i_model._refraction_const * glm::vec4(0.0, 0.0, 1.0, 0.0);

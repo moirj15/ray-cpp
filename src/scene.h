@@ -9,19 +9,19 @@
 
 class Scene
 {
-    std::vector<std::unique_ptr<Object>> objList;
-    std::vector<Light> lightList;
+    std::vector<std::unique_ptr<Object>> _objects;
+    std::vector<Light> _lights;
 
   public:
     Scene() = default;
     Scene(const Scene &) = delete;
     Scene &operator=(const Scene &) = delete;
 
-    void AddObject(Object *object) { objList.emplace_back(object); }
-    void AddLight(const Light &light) { lightList.push_back(light); }
-    const std::vector<Light> &GetLights() const { return lightList; }
+    void AddObject(Object *object) { _objects.emplace_back(object); }
+    void AddLight(const Light &light) { _lights.push_back(light); }
+    [[nodiscard]] const std::vector<Light> &GetLights() const { return _lights; }
 
-    Object *CastRay(const Ray &ray, IntersectData &data, s32 check_obj) const;
+    [[nodiscard]] Object *CastRay(const Ray &ray, IntersectData &data, s32 check_obj) const;
 
-    void transform(glm::mat4 mat);
+    void Transform(glm::mat4 mat);
 };
