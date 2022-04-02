@@ -1,9 +1,11 @@
 #pragma once
 
-#include "scene.h"
 #include "utils.h"
 
 #include <glm/vec4.hpp>
+
+class Scene;
+struct IntersectData;
 
 class Material
 {

@@ -1,32 +1,33 @@
 #include "illumination.h"
 
-glm::vec4 Phong::illuminate(
-    const IntersectData &id, const ::Light &light, const glm::vec3 &eyepoint, bool in_shadow) const
+#include "scene.h"
+
+glm::vec4 Phong::illuminate(const IntersectData &id) const
 {
-    const auto surfToLight = glm::normalize(light.position - id.intersection);
-    const auto viewVec = glm::normalize(-id.ray.direction);
-    const auto reflectionVec = glm::normalize(glm::reflect(-surfToLight, id.normal));
+    for (const auto &light : _scene.GetLights()) {
+        const auto surfToLight = glm::normalize(light.position - id.intersection);
+        const auto viewVec = glm::normalize(-id.ray.direction);
+        const auto reflectionVec = glm::normalize(glm::reflect(-surfToLight, id.normal));
 
-    glm::vec4 ambient, diffuse, specular;
-    glm::vec4 ret_col;
+        glm::vec4 ambient, diffuse, specular;
+        glm::vec4 ret_col;
 
-    ambient = light.ambient * _ambient_coef * ambient_mat;
-    if (in_shadow) {
-        return ambient;
-    } else {
-        diffuse = light.color * _diffuse_coef * diffuse_mat * fmaxf(0.0, glm::dot(id.normal, surfToLight));
-        specular = light.color * _specular_coef * specular_mat
-                   * powf(fmaxf(glm::dot(reflectionVec, viewVec), 0.0), _specular_exp);
-        return ambient + diffuse + specular;
+        ambient = light.ambient * _ambient_coef * ambient_mat;
+        if (_scene.InShadow()) {
+            return ambient;
+        } else {
+            diffuse = light.color * _diffuse_coef * diffuse_mat * fmaxf(0.0, glm::dot(id.normal, surfToLight));
+            specular = light.color * _specular_coef * specular_mat
+                       * powf(fmaxf(glm::dot(reflectionVec, viewVec), 0.0), _specular_exp);
+            return ambient + diffuse + specular;
+        }
     }
 }
 
-
-glm::vec4 CheckerBoard::illuminate(
-    const IntersectData &id, const ::Light &light, const glm::vec3 &eyepoint, bool in_shadow) const
+glm::vec4 CheckerBoard::illuminate(const IntersectData &id) const
 {
     const auto surfToLight = glm::normalize(light.position - id.intersection);
-    const auto viewVec = glm::normalize(eyepoint - id.intersection);
+    const auto viewVec = glm::normalize(id.ray.origin - id.intersection);
     const auto reflectionVec = glm::normalize(glm::reflect(-surfToLight, id.normal));
 
     glm::vec4 ambient, diffuse, specular;

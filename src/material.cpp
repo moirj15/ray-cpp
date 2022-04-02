@@ -1,5 +1,7 @@
 #include "material.h"
 
+#include "scene.h"
+
 glm::vec4 ReflectiveMaterial::Sample(const IntersectData &intersect_data) const
 {
 #if 0
@@ -34,10 +36,6 @@ glm::vec4 RefractiveMaterial::Sample(const IntersectData &intersect_data) const
 
     f32 internal_ref_check = 1.0f - ((powf(ni, 2.0f) * (1.0f - powf(glm::dot(ray_dir, normal), 2.0))) / powf(nt, 2.0f));
 
-    /*
-    if (refract_glass == refract_air) {
-        direction = ray_dir;
-    } else */
     if (internal_ref_check < 0.0) {
         // Total internal reflection
         direction = glm::normalize(glm::reflect(intersect_data.intersection, normal));
@@ -51,9 +49,9 @@ glm::vec4 RefractiveMaterial::Sample(const IntersectData &intersect_data) const
     auto *hit_obj = _scene.CastRay(transmission, data, -1);
     glm::vec4 color(0);
     if (hit_obj) {
-        color += _refraction_const * hit_obj->Sample(_scene, data);//CalculateLight(scene, data, hit_obj->GetIlluminationModel(), lights, hit_obj, depth + 1);
+        color += _refraction_const * hit_obj->Sample(data);//CalculateLight(scene, data, hit_obj->GetIlluminationModel(), lights, hit_obj, depth + 1);
     } else {
-        color += i_model._refraction_const * glm::vec4(0.0, 0.0, 1.0, 0.0);
+        color += _refraction_const * glm::vec4(0.0, 0.0, 1.0, 0.0);
     }
     return glm::vec4();
 }
