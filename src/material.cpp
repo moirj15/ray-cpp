@@ -9,11 +9,11 @@ glm::vec4 ReflectiveMaterial::Sample(const IntersectData &intersect_data) const
     const auto reflectionVec = glm::normalize(-glm::reflect(surfToLight, intersect_data.normal));
 
     if (hit_obj > -1) {
-        color += i_model._reflection_const
-                 * CalculateLight(scene, data, scene.objList[hit_obj]->GetIlluminationModel(), lights,
+        color += _shader._reflection_const
+                 * CalculateLight(scene, data, scene.objList[hit_obj]->GetShader(), lights,
                                   hit_obj, depth + 1);
     } else {
-        color += i_model._reflection_const * glm::vec4(0.0, 0.0, 1.0, 0.0);
+        color += _shader._reflection_const * glm::vec4(0.0, 0.0, 1.0, 0.0);
     }
 #endif
     return {};
@@ -49,7 +49,7 @@ glm::vec4 RefractiveMaterial::Sample(const IntersectData &intersect_data) const
     auto *hit_obj = _scene.CastRay(transmission, data, -1);
     glm::vec4 color(0);
     if (hit_obj) {
-        color += _refraction_const * hit_obj->Sample(data);//CalculateLight(scene, data, hit_obj->GetIlluminationModel(), lights, hit_obj, depth + 1);
+        color += _refraction_const * hit_obj->Sample(data);//CalculateLight(scene, data, hit_obj->GetShader(), lights, hit_obj, depth + 1);
     } else {
         color += _refraction_const * glm::vec4(0.0, 0.0, 1.0, 0.0);
     }

@@ -1,7 +1,7 @@
 #pragma once
 
-#include "illumination.h"
 #include "object.h"
+#include "shader.h"
 
 #include <glm/mat4x4.hpp>
 #include <memory>

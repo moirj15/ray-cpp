@@ -1,8 +1,7 @@
 #include "illumination.h"
-
 #include "scene.h"
 
-glm::vec4 Phong::illuminate(const IntersectData &id) const
+glm::vec3 Phong::Execute(const IntersectData &id) const
 {
     for (const auto &light : _scene.GetLights()) {
         const auto surfToLight = glm::normalize(light.position - id.intersection);
@@ -24,7 +23,7 @@ glm::vec4 Phong::illuminate(const IntersectData &id) const
     }
 }
 
-glm::vec4 CheckerBoard::illuminate(const IntersectData &id) const
+glm::vec3 CheckerBoard::Execute(const IntersectData &id) const
 {
     const auto surfToLight = glm::normalize(light.position - id.intersection);
     const auto viewVec = glm::normalize(id.ray.origin - id.intersection);

@@ -1,6 +1,6 @@
 project(rayTracer)
 
-cmake_minimum_required(VERSION 3.21)
+cmake_minimum_required(VERSION 3.18)
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
@@ -17,8 +17,8 @@ add_executable(
 	src/scene.cpp
 	"src/utils.h"
 	"src/utils.cpp"
-	"src/illumination.cpp"
-	"src/illumination.h"
+	"src/shader.cpp"
+	"src/shader.h"
 	"src/intersectData.cpp"
 	"src/intersectData.h"
 	"src/ray.h"

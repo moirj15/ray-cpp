@@ -1,9 +1,10 @@
 #include "bmpIO.h"
 #include "camera.h"
-#include "illumination.h"
+#include "material.h"
 #include "object.h"
-#include "utils.h"
 #include "scene.h"
+#include "shader.h"
+#include "utils.h"
 
 #include <cstdio>
 #include <cstdlib>
@@ -55,7 +56,7 @@ int main(int argc, char **argv)
 
     world.AddObject(new Polygon(triangles, &floor_illum));
 
-    //world.objList.push_back(std::make_unique<Sphere>(glm::vec4(2.93, -2.00, 4.21, 1.0), 0.8, &sphere_illum2));
+    // world.objList.push_back(std::make_unique<Sphere>(glm::vec4(2.93, -2.00, 4.21, 1.0), 0.8, &sphere_illum2));
 
     auto camera = std::make_unique<Camera>(camera_pos, look_at, up_vec, film_plane_width, film_plane_height, 1.0f);
 

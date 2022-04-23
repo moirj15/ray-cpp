@@ -1,11 +1,12 @@
 #pragma once
 
-#include "illumination.h"
 #include "intersectData.h"
 #include "scene.h"
+#include "shader.h"
 #include "utils.h"
 
 #include <glm/gtc/matrix_transform.hpp>
+#include <vector>
 
 #define WIDTH  1080
 #define HEIGHT 720
@@ -55,14 +56,14 @@ class Camera
 
     void Render(const Scene &scene);
 
-//    s32 Intersection(const Scene &world, Ray ray, IntersectData &data, s32 check_obj);
+    //    s32 Intersection(const Scene &world, Ray ray, IntersectData &data, s32 check_obj);
 
     [[nodiscard]] const Frame &GetFrame() const { return _frame; }
     [[nodiscard]] glm::mat4 GetCameraTransform() const { return _camera_transform; }
 
   private:
-    glm::vec4 CalculateLight(const Scene &scene, IntersectData &id, const IlluminationModel &i_model,
-        std::vector<Light> lights, s32 obj, u32 depth);
+    glm::vec4 CalculateLight(
+        const Scene &scene, IntersectData &id, const Shader &i_model, std::vector<Light> lights, s32 obj, u32 depth);
 
     bool inShadow(const Scene &world, IntersectData &id, Light light, s32 obj);
 
