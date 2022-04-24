@@ -31,12 +31,29 @@ Object *Scene::CastRay(const Ray &ray, IntersectData &data, s32 check_obj) const
     return hit;
 }
 
+bool Scene::InShadow(const IntersectData &intersect_data) const
+{
+    for (const auto &light : _lights) {
+        const auto surfToLight = glm::normalize(light.position - intersect_data.intersection);
+        const auto viewVec = glm::normalize(-intersect_data.ray.direction);
+        const auto reflectionVec = glm::normalize(glm::reflect(-surfToLight, intersect_data.normal));
+        const Ray ray(intersect_data.intersection, reflectionVec);
+        IntersectData throw_away;
+        for (const auto &object : _objects) {
+            if (object->Intersect(ray, throw_away)) {
+                return true;
+            }
+        }
+    }
+    return false;
+}
+
 void Scene::Transform(glm::mat4 mat)
 {
     for (const auto &object : _objects) {
         object->Transform(mat);
     }
-    for (u64 l = 0; l < _lights.size(); l++) {
-        _lights[l].position = mat * glm::vec4(_lights[l].position, 1.0);
+    for (auto &light : _lights) {
+        light.position = mat * glm::vec4(light.position, 1.0);
     }
 }

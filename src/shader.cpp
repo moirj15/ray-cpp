@@ -1,4 +1,4 @@
-#include "illumination.h"
+#include "shader.h"
 #include "scene.h"
 
 glm::vec3 Phong::Execute(const IntersectData &id) const
@@ -12,7 +12,7 @@ glm::vec3 Phong::Execute(const IntersectData &id) const
         glm::vec4 ret_col;
 
         ambient = light.ambient * _ambient_coef * ambient_mat;
-        if (_scene.InShadow()) {
+        if (_scene.InShadow(id)) {
             return ambient;
         } else {
             diffuse = light.color * _diffuse_coef * diffuse_mat * fmaxf(0.0, glm::dot(id.normal, surfToLight));

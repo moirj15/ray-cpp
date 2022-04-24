@@ -4,7 +4,7 @@
 
 #include <glm/glm.hpp>
 
-struct Scene;
+class Scene;
 
 struct Light {
     glm::vec3 position;

@@ -18,17 +18,17 @@ class Frame
 {
     const s32 _width;
     const s32 _height;
-    std::vector<glm::vec4> _image;
+    std::vector<glm::vec3> _image;
 
   public:
     Frame(s32 width, s32 height) : _width(width), _height(height), _image(_width * _height, glm::vec4(0)) {}
-    void SetPixel(s32 x, s32 y, const glm::vec4 &color) { _image[_width * y + x] = color; }
-    void SetPixel(s32 i, const glm::vec4 &color) { _image[i] = color; }
-    [[nodiscard]] glm::vec4 GetPixel(s32 x, s32 y) const { return _image[_width * y + x]; }
-    [[nodiscard]] glm::vec4 GetPixel(s32 i) const { return _image[i]; }
+    void SetPixel(s32 x, s32 y, const glm::vec3 &color) { _image[_width * y + x] = color; }
+    void SetPixel(s32 i, const glm::vec3 &color) { _image[i] = color; }
+    [[nodiscard]] glm::vec3 GetPixel(s32 x, s32 y) const { return _image[_width * y + x]; }
+    [[nodiscard]] glm::vec3 GetPixel(s32 i) const { return _image[i]; }
     [[nodiscard]] s32 GetWidth() const { return _width; }
     [[nodiscard]] s32 GetHeight() const { return _height; }
-    [[nodiscard]] const std::vector<glm::vec4> &GetImage() const { return _image; }
+    [[nodiscard]] const std::vector<glm::vec3> &GetImage() const { return _image; }
 };
 
 class Camera

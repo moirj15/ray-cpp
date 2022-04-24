@@ -22,6 +22,7 @@ class Scene
     [[nodiscard]] const std::vector<Light> &GetLights() const { return _lights; }
 
     [[nodiscard]] Object *CastRay(const Ray &ray, IntersectData &data, s32 check_obj) const;
+    [[nodiscard]] bool InShadow(const IntersectData &intersect_data) const;
 
     void Transform(glm::mat4 mat);
 };
