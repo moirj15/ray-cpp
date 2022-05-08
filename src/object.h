@@ -14,12 +14,16 @@ class Scene;
 class Object
 {
   protected:
-    Shader *_shader;
-    Material *_material;
+    const Shader *m_shader;
 
   public:
+    enum class Type {
+        Sphere,
+        Mesh,
+    };
+    const Type type;
     Object() = delete;
-    explicit Object(Shader *i, Material *material) : _shader(i), _material(material) {}
+    explicit Object(Shader *shader, Type type) : m_shader(shader), type(type) {}
     /**
      * Virtual destructor.
      */
@@ -39,22 +43,20 @@ class Object
      */
     virtual bool Intersect(const Ray &r, IntersectData &id) const = 0;
     virtual void Transform(const glm::mat4 &transform) = 0;
-    [[nodiscard]] const Shader &GetShader() const { return *_shader; }
-//    [[nodiscard]] glm::vec4 Sample(const IntersectData &intersect_data)
-//    {
-//        return _shader->Execute(intersect_data) + _material->Sample(intersect_data);
-//    }
+    [[nodiscard]] const Shader &GetShader() const { return *m_shader; }
+    //    [[nodiscard]] glm::vec4 Sample(const IntersectData &intersect_data)
+    //    {
+    //        return _shader->Execute(intersect_data) + _material->Sample(intersect_data);
+    //    }
 };
 
 class Sphere final : public Object
 {
-    f32 _radius;
-    glm::vec3 _center;
+    f32 m_radius;
+    glm::vec3 m_center;
 
   public:
-    Sphere(const glm::vec3 &c, const f32 r, Shader *i, Material *material) : Object(i, material), _radius(r), _center(c)
-    {
-    }
+    Sphere(const glm::vec3 &c, const f32 r, Shader *i) : Object(i, Type::Mesh), m_radius(r), m_center(c) {}
 
     /**
      * Checks for the Intersection of an object with the given ray, if there is
@@ -72,11 +74,9 @@ class Sphere final : public Object
     void Transform(const glm::mat4 &transform) override;
 };
 
-class Polygon final : public Object
+class Mesh final : public Object
 {
-    // triangles will be stored as groups of 3 vec3s
-    std::vector<glm::vec4> _vertices;
-
+    std::vector<glm::vec3> m_vertices;
   public:
     /**
      * Constructor.
@@ -84,7 +84,7 @@ class Polygon final : public Object
      * @param v: The list of vertices, triangles will be in groups of 3.
      * @param n: The normal for the triangle face.
      */
-    Polygon(std::vector<glm::vec4> &v, Shader *i, Material *material) : Object(i, material), _vertices(std::move(v)) {}
+    Mesh(std::vector<glm::vec3> &v, Shader *i) : Object(i, Type::Mesh), m_vertices(std::move(v)) {}
 
     /**
      * Checks for the Intersection of an object with the given ray, if there is
@@ -100,4 +100,6 @@ class Polygon final : public Object
      */
     bool Intersect(const Ray &r, IntersectData &id) const override;
     void Transform(const glm::mat4 &transform) override;
+
+    [[nodiscard]] const std::vector<glm::vec3> GetVertices() const { return m_vertices; }
 };

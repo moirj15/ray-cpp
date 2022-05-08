@@ -18,9 +18,9 @@ bool Sphere::Intersect(const Ray &r, IntersectData &id) const
 {
     const glm::vec3 &d = r.direction;
     const glm::vec3 &o = r.origin;
-    f32 B = 2.0f * (d.x * (o.x - _center.x) + d.y * (o.y - _center.y) + d.z * (o.z - _center.z));
+    f32 B = 2.0f * (d.x * (o.x - m_center.x) + d.y * (o.y - m_center.y) + d.z * (o.z - m_center.z));
 
-    f32 C = pow(o.x - _center.x, 2.0f) + pow(o.y - _center.y, 2.0f) + pow(o.z - _center.z, 2.0f) - pow(_radius, 2.0f);
+    f32 C = pow(o.x - m_center.x, 2.0f) + pow(o.y - m_center.y, 2.0f) + pow(o.z - m_center.z, 2.0f) - pow(m_radius, 2.0f);
 
     // Calculate the value under the square root in the quadratic formula
     f32 squareRootCheck = pow(B, 2.0f) - (4.0f * C);
@@ -46,14 +46,14 @@ bool Sphere::Intersect(const Ray &r, IntersectData &id) const
 
     // Calculate intersection and normal
     id.intersection = (o + (d * leastPos));
-    id.normal = glm::normalize(id.intersection - _center);
+    id.normal = glm::normalize(id.intersection - m_center);
     id.ray = r;
     return true;
 }
 
 void Sphere::Transform(const glm::mat4 &transform)
 {
-    _center = transform * glm::vec4(_center, 1.0f);
+    m_center = transform * glm::vec4(m_center, 1.0f);
 }
 
 
@@ -69,13 +69,13 @@ void Sphere::Transform(const glm::mat4 &transform)
  * normal if there is an Intersection.
  * @return: True if the object was intersected, false otherwise.
  */
-bool Polygon::Intersect(const Ray &r, IntersectData &id) const
+bool Mesh::Intersect(const Ray &r, IntersectData &id) const
 {
-    for (u64 i = 0; i < _vertices.size(); i += 3) {
+    for (u64 i = 0; i < m_vertices.size(); i += 3) {
         // The _vertices of the triangle
-        glm::vec3 p0 = glm::vec3(_vertices[i]);
-        glm::vec3 p1 = glm::vec3(_vertices[i + 1]);
-        glm::vec3 p2 = glm::vec3(_vertices[i + 2]);
+        glm::vec3 p0 = m_vertices[i];
+        glm::vec3 p1 = m_vertices[i + 1];
+        glm::vec3 p2 = m_vertices[i + 2];
 
         glm::vec3 e1 = p1 - p0;
         glm::vec3 e2 = p2 - p0;
@@ -116,9 +116,9 @@ bool Polygon::Intersect(const Ray &r, IntersectData &id) const
     return false;
 }
 
-void Polygon::Transform(const glm::mat4 &transform)
+void Mesh::Transform(const glm::mat4 &transform)
 {
-    for (auto &vertex : _vertices) {
-        vertex = transform * vertex;
+    for (auto &vertex : m_vertices) {
+        vertex = transform * glm::vec4(vertex, 1.0);
     }
 }

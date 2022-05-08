@@ -8,8 +8,8 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <vector>
 
-#define WIDTH  1080
-#define HEIGHT 720
+#define WIDTH 600
+#define HEIGHT 400
 
 #define PIC_SIZE (WIDTH * HEIGHT)
 

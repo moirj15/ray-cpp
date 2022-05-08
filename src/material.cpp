@@ -21,6 +21,7 @@ glm::vec4 ReflectiveMaterial::Sample(const IntersectData &intersect_data) const
 
 glm::vec4 RefractiveMaterial::Sample(const IntersectData &intersect_data) const
 {
+#if 0
     f32 ni, nt;
     glm::vec3 normal, direction;
     const auto ray_dir = glm::normalize(intersect_data.ray.direction);
@@ -53,5 +54,6 @@ glm::vec4 RefractiveMaterial::Sample(const IntersectData &intersect_data) const
     } else {
         color += _refraction_const * glm::vec4(0.0, 0.0, 1.0, 0.0);
     }
-    return glm::vec4();
+#endif
+    return glm::vec4(0);
 }

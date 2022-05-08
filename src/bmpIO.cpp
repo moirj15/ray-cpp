@@ -1,8 +1,9 @@
 #include "bmpIO.h"
 
+#include "camera.h"
+
 #include <SDL2/SDL.h>
 #include <vector>
-#include "camera.h"
 
 namespace bmp
 {
@@ -13,7 +14,7 @@ namespace bmp
  * @param color: The vector with the color data.
  * @return: The color data as a u32.
  */
-u32 vec4_to_u32(const glm::vec4 &color)
+u32 vec4_to_u32(const glm::vec3 &color)
 {
     u8 red = (u8)(255.0 * color.r);
     u8 green = (u8)(255.0 * color.g);
@@ -40,8 +41,8 @@ void Write(const char *file, const Frame &frame)
         data.push_back(vec4_to_u32(frame.GetImage()[i]));
     }
 
-    SDL_Surface *surface =
-        SDL_CreateRGBSurfaceFrom((void *)data.data(), frame.GetWidth(), frame.GetHeight(), 32, frame.GetWidth() * 4, rmask, gmask, bmask, amask);
+    SDL_Surface *surface = SDL_CreateRGBSurfaceFrom(
+        (void *)data.data(), frame.GetWidth(), frame.GetHeight(), 32, frame.GetWidth() * 4, rmask, gmask, bmask, amask);
 
     if (SDL_SaveBMP(surface, file) < 0) {
         printf("SDL failed to save file: %s\n", SDL_GetError());

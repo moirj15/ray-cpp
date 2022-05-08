@@ -5,38 +5,42 @@ set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 add_executable(
-	rayTracer
-	"src/main.cpp"
-	"src/bmpIO.h"
-	"src/bmpIO.cpp"
-	"src/camera.h"
-	"src/camera.cpp"
-	"src/object.h"
-	"src/object.cpp"
-	src/scene.h
-	src/scene.cpp
-	"src/utils.h"
-	"src/utils.cpp"
-	"src/shader.cpp"
-	"src/shader.h"
-	"src/intersectData.cpp"
-	"src/intersectData.h"
-	"src/ray.h"
+        rayTracer
+        "src/main.cpp"
+        "src/bmpIO.h"
+        "src/bmpIO.cpp"
+        "src/camera.h"
+        "src/camera.cpp"
+        "src/object.h"
+        "src/object.cpp"
+        src/scene.h
+        src/scene.cpp
+        "src/utils.h"
+        "src/utils.cpp"
+        "src/shader.cpp"
+        "src/shader.h"
+        "src/intersectData.cpp"
+        "src/intersectData.h"
+        "src/ray.h"
         src/material.h src/material.cpp)
 
+add_subdirectory(libs/focus)
+
 target_include_directories(rayTracer
-	PRIVATE
-	libs/glm
-	libs/sdl2/include
+        PRIVATE
+        libs/glm
+        libs/sdl2/include
+        libs/focus/src/Interface
 )
 
 target_link_libraries(
-	rayTracer
+        rayTracer
         Setupapi.lib
-	${CMAKE_SOURCE_DIR}/libs/SDL2/SDL2main.lib
-	${CMAKE_SOURCE_DIR}/libs/SDL2/SDL2-static.lib
+        ${CMAKE_SOURCE_DIR}/libs/SDL2/SDL2main.lib
+        ${CMAKE_SOURCE_DIR}/libs/SDL2/SDL2-static.lib
         msvcrtd.lib
         winmm.lib
         imm32.lib
         version.lib
+        focus
 )

@@ -1,30 +1,33 @@
 #include "shader.h"
+
 #include "scene.h"
 
 glm::vec3 Phong::Execute(const IntersectData &id) const
 {
-    for (const auto &light : _scene.GetLights()) {
+    for (const auto &light : m_scene.GetLights()) {
         const auto surfToLight = glm::normalize(light.position - id.intersection);
         const auto viewVec = glm::normalize(-id.ray.direction);
         const auto reflectionVec = glm::normalize(glm::reflect(-surfToLight, id.normal));
 
-        glm::vec4 ambient, diffuse, specular;
-        glm::vec4 ret_col;
+        glm::vec3 ambient, diffuse, specular;
+        glm::vec3 ret_col;
 
-        ambient = light.ambient * _ambient_coef * ambient_mat;
-        if (_scene.InShadow(id)) {
+        ambient = light.ambient * m_ambient_coef * m_ambient_mat;
+        if (m_scene.InShadow(id)) {
             return ambient;
         } else {
-            diffuse = light.color * _diffuse_coef * diffuse_mat * fmaxf(0.0, glm::dot(id.normal, surfToLight));
-            specular = light.color * _specular_coef * specular_mat
-                       * powf(fmaxf(glm::dot(reflectionVec, viewVec), 0.0), _specular_exp);
+            diffuse = light.color * m_diffuse_coef * m_diffuse_mat * fmaxf(0.0, glm::dot(id.normal, surfToLight));
+            specular = light.color * m_specular_coef * m_specular_mat
+                       * powf(fmaxf(glm::dot(reflectionVec, viewVec), 0.0), m_specular_exp);
             return ambient + diffuse + specular;
         }
     }
+    return {0, 0, 0};
 }
 
 glm::vec3 CheckerBoard::Execute(const IntersectData &id) const
 {
+#if 0
     const auto surfToLight = glm::normalize(light.position - id.intersection);
     const auto viewVec = glm::normalize(id.ray.origin - id.intersection);
     const auto reflectionVec = glm::normalize(glm::reflect(-surfToLight, id.normal));
@@ -43,6 +46,8 @@ glm::vec3 CheckerBoard::Execute(const IntersectData &id) const
 
         return ambient + diffuse + specular;
     }
+#endif
+    return {0, 0, 0};
 }
 
 glm::vec4 CheckerBoard::get_cube(const IntersectData &id) const
@@ -62,12 +67,12 @@ glm::vec4 CheckerBoard::get_cube(const IntersectData &id) const
     u32 col_odd = ((u32)(v_barry * 12.0)) % 2;
     // printf("row %d col %d\n", row_odd , col_odd);
     if (!row_odd && !col_odd) {
-        return color2;
+        return m_color2;
     } else if (!row_odd && col_odd) {
-        return color1;
+        return m_color1;
     } else if (row_odd && !col_odd) {
-        return color1;
+        return m_color1;
     } else { //(!row_odd && !col_odd)
-        return color2;
+        return m_color2;
     }
 }
