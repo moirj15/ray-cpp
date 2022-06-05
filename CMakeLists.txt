@@ -6,31 +6,30 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 add_executable(
         rayTracer
-        "src/main.cpp"
-        "src/bmpIO.h"
-        "src/bmpIO.cpp"
-        "src/camera.h"
-        "src/camera.cpp"
-        "src/object.h"
-        "src/object.cpp"
+        src/main.cpp
+        src/bmpIO.h
+        src/bmpIO.cpp
+        src/camera.h
+        src/camera.cpp
+        src/object.h
+        src/object.cpp
         src/scene.h
         src/scene.cpp
-        "src/utils.h"
-        "src/utils.cpp"
-        "src/shader.cpp"
-        "src/shader.h"
-        "src/intersectData.cpp"
-        "src/intersectData.h"
-        "src/ray.h"
-        src/material.h src/material.cpp)
-
-add_subdirectory(libs/focus)
+        src/utils.h
+        src/utils.cpp
+        src/shader.cpp
+        src/shader.h
+        src/intersectData.cpp
+        src/intersectData.h
+        src/ray.h
+        src/material.h
+		src/material.cpp
+		src/glad.c)
 
 target_include_directories(rayTracer
         PRIVATE
         libs/glm
         libs/sdl2/include
-        libs/focus/src/Interface
 )
 
 target_link_libraries(
@@ -42,5 +41,5 @@ target_link_libraries(
         winmm.lib
         imm32.lib
         version.lib
-        focus
+		d3d11.lib
 )
