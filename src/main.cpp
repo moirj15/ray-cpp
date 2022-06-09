@@ -118,29 +118,29 @@ class SceneViewer
 
         // clang-format off
 		DXGI_SWAP_CHAIN_DESC swapChainDesc = {
-		.BufferDesc = {
-			.Width = (uint32_t)width,
-			.Height = (uint32_t)height,
-			.RefreshRate = {
-				.Numerator = 60,
-				.Denominator = 1,
+				.BufferDesc = {
+					.Width = (uint32_t)width,
+					.Height = (uint32_t)height,
+					.RefreshRate = {
+						.Numerator = 60,
+						.Denominator = 1,
+					},
+					.Format = DXGI_FORMAT_R8G8B8A8_UNORM,
+					.ScanlineOrdering = DXGI_MODE_SCANLINE_ORDER_UNSPECIFIED,
+					.Scaling = DXGI_MODE_SCALING_UNSPECIFIED,
+				},
+			// Multi sampling would be initialized here
+			.SampleDesc = {
+				.Count = 1,
+				.Quality = 0,
 			},
-			.Format = DXGI_FORMAT_R8G8B8A8_UNORM,
-			.ScanlineOrdering = DXGI_MODE_SCANLINE_ORDER_UNSPECIFIED,
-			.Scaling = DXGI_MODE_SCALING_UNSPECIFIED,
-		},
-      // Multi sampling would be initialized here
-      .SampleDesc = {
-          .Count = 1,
-          .Quality = 0,
-      },
-      .BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT,
-      .BufferCount = 1,
-      .OutputWindow = hwnd,
-      .Windowed = true,
-      .SwapEffect = DXGI_SWAP_EFFECT_DISCARD,
-      .Flags = 0,
-  };
+			.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT,
+			.BufferCount = 1,
+			.OutputWindow = hwnd,
+			.Windowed = true,
+			.SwapEffect = DXGI_SWAP_EFFECT_DISCARD,
+			.Flags = 0,
+		};
         // clang-format on
 
         Microsoft::WRL::ComPtr<IDXGIDevice> dxgiDevice;
@@ -205,8 +205,8 @@ class SceneViewer
         for (const auto &vertex : mesh->GetVertices()) {
             m_vertices.emplace_back(vertex);
         }
-        // TODO: store matrix with objects?
-        // m_constants.emplace_back(m_camera.GetCameraTransform() * )
+        // TODO: Just be lazy for now with the transforms
+        m_constants.push_back({m_camera.GetCameraTransform(), glm::vec3(1.0, 1.0, 1.0)});
     }
 };
 
