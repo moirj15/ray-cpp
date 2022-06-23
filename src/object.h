@@ -13,10 +13,10 @@ class Scene;
 
 class Object
 {
-  protected:
+protected:
     const Shader *m_shader;
 
-  public:
+public:
     enum class Type {
         Sphere,
         Mesh,
@@ -55,7 +55,7 @@ class Sphere final : public Object
     f32 m_radius;
     glm::vec3 m_center;
 
-  public:
+public:
     Sphere(const glm::vec3 &c, const f32 r, Shader *i) : Object(i, Type::Mesh), m_radius(r), m_center(c) {}
 
     /**
@@ -77,14 +77,10 @@ class Sphere final : public Object
 class Mesh final : public Object
 {
     std::vector<glm::vec3> m_vertices;
-  public:
-    /**
-     * Constructor.
-     *
-     * @param v: The list of vertices, triangles will be in groups of 3.
-     * @param n: The normal for the triangle face.
-     */
-    Mesh(std::vector<glm::vec3> &v, Shader *i) : Object(i, Type::Mesh), m_vertices(std::move(v)) {}
+    std::vector<u32> m_indices;
+
+public:
+    Mesh(std::vector<glm::vec3> &v, std::vector<u32> indices, Shader *i) : Object(i, Type::Mesh), m_vertices(std::move(v)), m_indices(std::move(indices)) {}
 
     /**
      * Checks for the Intersection of an object with the given ray, if there is

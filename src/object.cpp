@@ -20,7 +20,8 @@ bool Sphere::Intersect(const Ray &r, IntersectData &id) const
     const glm::vec3 &o = r.origin;
     f32 B = 2.0f * (d.x * (o.x - m_center.x) + d.y * (o.y - m_center.y) + d.z * (o.z - m_center.z));
 
-    f32 C = pow(o.x - m_center.x, 2.0f) + pow(o.y - m_center.y, 2.0f) + pow(o.z - m_center.z, 2.0f) - pow(m_radius, 2.0f);
+    f32 C =
+        pow(o.x - m_center.x, 2.0f) + pow(o.y - m_center.y, 2.0f) + pow(o.z - m_center.z, 2.0f) - pow(m_radius, 2.0f);
 
     // Calculate the value under the square root in the quadratic formula
     f32 squareRootCheck = pow(B, 2.0f) - (4.0f * C);
@@ -56,7 +57,6 @@ void Sphere::Transform(const glm::mat4 &transform)
     m_center = transform * glm::vec4(m_center, 1.0f);
 }
 
-
 /**
  * Checks for the Intersection of an object with the given ray, if there is
  * an Intersection then the params intersection and normal will have their
@@ -72,10 +72,19 @@ void Sphere::Transform(const glm::mat4 &transform)
 bool Mesh::Intersect(const Ray &r, IntersectData &id) const
 {
     for (u64 i = 0; i < m_vertices.size(); i += 3) {
-        // The _vertices of the triangle
+// The _vertices of the triangle
+#if 0
         glm::vec3 p0 = m_vertices[i];
         glm::vec3 p1 = m_vertices[i + 1];
         glm::vec3 p2 = m_vertices[i + 2];
+#endif
+        const u32 i0 = m_indices[i];
+        const u32 i1 = m_indices[i + 1];
+        const u32 i2 = m_indices[i + 2];
+
+        const auto p0 = m_vertices[i0];
+        const auto p1 = m_vertices[i1];
+        const auto p2 = m_vertices[i2];
 
         glm::vec3 e1 = p1 - p0;
         glm::vec3 e2 = p2 - p0;

@@ -24,7 +24,7 @@ add_executable(
         src/ray.h
         src/material.h
 		src/material.cpp
-		src/glad.c)
+        src/SceneViewer.cpp)
 
 target_include_directories(rayTracer
         PRIVATE

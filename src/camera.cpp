@@ -5,20 +5,23 @@
 #include <cmath>
 #include <glm/gtx/string_cast.hpp>
 
-void Camera::Render(const Scene &scene)
+namespace tracer
+{
+
+void Render(const Scene &scene, const Camera &camera, Frame &frame)
 {
     std::vector<Ray> initial_rays;
     // TODO: This forces the origin ray to be coming from the top left of the screen
-//    for (s32 y = _frame.GetHeight() - 1; y >= 0 ; y--) {
-    for (s32 y = 0; y < _frame.GetHeight() ; y++) {
-        f32 filmPlanY = (_film_plane_height / 2)
-                        - (static_cast<f32>(y) * (_film_plane_height / static_cast<f32>(_frame.GetHeight())));
-        for (s32 x = 0; x < _frame.GetWidth(); x++) {
-            f32 filmPlanX = (-_film_plane_width / 2)
-                            + (static_cast<f32>(x) * (_film_plane_width / static_cast<f32>(_frame.GetWidth())));
-            glm::vec3 direction(filmPlanX, filmPlanY, -_f);
-            initial_rays.emplace_back(_eyepoint, glm::normalize(direction));
-//            initial_rays.emplace_back(direction, _lookAt);
+    //    for (s32 y = _frame.GetHeight() - 1; y >= 0 ; y--) {
+    for (s32 y = 0; y < frame.GetHeight(); y++) {
+        f32 filmPlanY = (camera.film_plane_height / 2)
+                        - (static_cast<f32>(y) * (camera.film_plane_height / static_cast<f32>(frame.GetHeight())));
+        for (s32 x = 0; x < frame.GetWidth(); x++) {
+            f32 filmPlanX = (-camera.film_plane_width / 2)
+                            + (static_cast<f32>(x) * (camera.film_plane_width / static_cast<f32>(frame.GetWidth())));
+            glm::vec3 direction(filmPlanX, filmPlanY, -camera.f);
+            initial_rays.emplace_back(camera.eyepoint, glm::normalize(direction));
+            //            initial_rays.emplace_back(direction, look_at);
         }
     }
     const u32 depth = 2;
@@ -33,13 +36,13 @@ void Camera::Render(const Scene &scene)
                 auto *object = scene.CastRay(ray, intersect_data, -1);
 
                 if (!object) {
-//                    _frame.SetPixel(i, glm::vec4(1.0f, 1.0f, 1.0f, 1.0f)/* * lmax*/);
+                    //                    _frame.SetPixel(i, glm::vec4(1.0f, 1.0f, 1.0f, 1.0f)/* * lmax*/);
                     continue;
                 }
                 color += glm::abs(intersect_data.normal); //+= object->GetShader().Execute(intersect_data);
 
                 for (const auto &light : scene.GetLights()) {
-                    const auto surfToLight = glm::normalize(_eyepoint - intersect_data.intersection);
+                    const auto surfToLight = glm::normalize(camera.eyepoint - intersect_data.intersection);
                     const auto reflectionVec = glm::normalize(-glm::reflect(surfToLight, intersect_data.normal));
                     next_bounce.emplace_back(intersect_data.intersection, reflectionVec);
                 }
@@ -47,9 +50,11 @@ void Camera::Render(const Scene &scene)
             std::swap(bounce_rays, next_bounce);
             next_bounce.clear();
         }
-        _frame.SetPixel(i, glm::clamp(color, {0.0, 0.0, 0.0}, {1.0, 1.0, 1.0}));
+        frame.SetPixel(i, glm::clamp(color, {0.0, 0.0, 0.0}, {1.0, 1.0, 1.0}));
     }
+#if 0 //TODO
     tone_rep(REINHARD);
+#endif
 }
 
 #if 0
@@ -65,7 +70,7 @@ s32 Camera::Intersection(const Scene &world, Ray ray, IntersectData &data, s32 c
         IntersectData curr_data;
 
         if (objects[i]->Intersect(ray, curr_data)) {
-            test_distance = glm::distance(_eyepoint, curr_data.intersection);
+            test_distance = glm::distance(eyepoint, curr_data.intersection);
             if ((check_obj > -1) && (i == (u64)check_obj)) {
                 continue;
             }
@@ -85,7 +90,7 @@ s32 Camera::Intersection(const Scene &world, Ray ray, IntersectData &data, s32 c
 static const f32 refract_air = 1.0f;
 static const f32 refract_glass = 1.1f;
 
-glm::vec4 Camera::CalculateLight(
+glm::vec4 CalculateLight(
     const Scene &scene, IntersectData &id, const Shader &i_model, std::vector<Light> lights, s32 obj, u32 depth)
 {
     glm::vec4 color(1.0);
@@ -94,11 +99,11 @@ glm::vec4 Camera::CalculateLight(
     for (u64 i = 0; i < lights.size(); i++) {
         Light &light = lights[i];
 
-        color += _shader.illuminate(id, light, _eyepoint, inShadow(scene, id, light, obj));
+        color += _shader.illuminate(id, light, eyepoint, inShadow(scene, id, light, obj));
 
         if (depth < MAX_DEPTH) {
             if (_shader._reflection_const > 0.0) {
-                const auto surfToLight = glm::normalize(_eyepoint - id.intersection);
+                const auto surfToLight = glm::normalize(eyepoint - id.intersection);
                 const auto reflectionVec = glm::normalize(-glm::reflect(surfToLight, id.normal));
                 Ray ray(id.intersection, reflectionVec);
                 IntersectData data;
@@ -157,7 +162,7 @@ glm::vec4 Camera::CalculateLight(
     return color;
 }
 
-bool Camera::inShadow(const Scene &world, IntersectData &id, Light light, s32 obj)
+bool inShadow(const Scene &world, IntersectData &id, Light light, s32 obj)
 {
     Ray r;
     r.direction = glm::normalize(light.position - id.intersection);
@@ -178,8 +183,9 @@ bool Camera::inShadow(const Scene &world, IntersectData &id, Light light, s32 ob
     return false;
 }
 
-void Camera::tone_rep(TONE_TYPE which_type)
+void tone_rep(TONE_TYPE which_type)
 {
+#if 0
     f32 log_avg_luminance = 0.0f;
     for (u64 i = 0; i < PIC_SIZE; i++) {
         auto pixel = _frame.GetPixel(i);
@@ -212,4 +218,6 @@ void Camera::tone_rep(TONE_TYPE which_type)
             _frame.SetPixel(i, glm::clamp(pixel, glm::vec3(0.0f), glm::vec3(1.0f)));
         }
     }
+#endif
 }
+} // namespace tracer
