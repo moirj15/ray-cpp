@@ -1,15 +1,14 @@
 #pragma once
 
-#include "intersectData.h"
-#include "material.h"
-#include "shader.h"
-#include "utils.h"
+#include "utils.hpp"
 
 #include <glm/mat4x4.hpp>
 #include <vector>
 
 struct Ray;
 class Scene;
+class Shader;
+struct IntersectData;
 
 class Object
 {

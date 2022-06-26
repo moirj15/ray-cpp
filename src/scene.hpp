@@ -1,7 +1,7 @@
 #pragma once
 
-#include "object.h"
-#include "shader.h"
+#include "object.hpp"
+#include "shader.hpp"
 
 #include <glm/mat4x4.hpp>
 #include <memory>
@@ -13,12 +13,13 @@ class Scene
     std::vector<glm::mat4> m_object_transforms;
     std::vector<Light> m_lights;
 
-  public:
+public:
     Scene() = default;
     Scene(const Scene &) = delete;
     Scene &operator=(const Scene &) = delete;
 
-    void AddObject(Object *object, const glm::mat4 &transform = glm::mat4(1.0)) {
+    void AddObject(Object *object, const glm::mat4 &transform = glm::mat4(1.0))
+    {
         m_objects.emplace_back(object);
         m_object_transforms.emplace_back(transform);
     }

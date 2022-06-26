@@ -1,6 +1,6 @@
-#include "material.h"
+#include "material.hpp"
 
-#include "scene.h"
+#include "scene.hpp"
 
 glm::vec4 ReflectiveMaterial::Sample(const IntersectData &intersect_data) const
 {

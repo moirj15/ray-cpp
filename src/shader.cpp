@@ -1,28 +1,28 @@
-#include "shader.h"
+#include "shader.hpp"
 
-#include "scene.h"
+#include "scene.hpp"
 
 glm::vec3 Phong::Execute(const IntersectData &id) const
 {
+    glm::vec3 ret_col(0, 0, 0);
     for (const auto &light : m_scene.GetLights()) {
         const auto surfToLight = glm::normalize(light.position - id.intersection);
         const auto viewVec = glm::normalize(-id.ray.direction);
         const auto reflectionVec = glm::normalize(glm::reflect(-surfToLight, id.normal));
 
         glm::vec3 ambient, diffuse, specular;
-        glm::vec3 ret_col;
 
         ambient = light.ambient * m_ambient_coef * m_ambient_mat;
         if (m_scene.InShadow(id)) {
-            return ambient;
+            ret_col += ambient;
         } else {
             diffuse = light.color * m_diffuse_coef * m_diffuse_mat * fmaxf(0.0, glm::dot(id.normal, surfToLight));
             specular = light.color * m_specular_coef * m_specular_mat
                        * powf(fmaxf(glm::dot(reflectionVec, viewVec), 0.0), m_specular_exp);
-            return ambient + diffuse + specular;
+            ret_col += ambient + diffuse + specular;
         }
     }
-    return {0, 0, 0};
+    return ret_col;
 }
 
 glm::vec3 CheckerBoard::Execute(const IntersectData &id) const

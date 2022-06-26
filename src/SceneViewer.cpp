@@ -1,4 +1,4 @@
-#include "SceneViewer.h"
+#include "SceneViewer.hpp"
 
 SceneViewer::SceneViewer(const Scene &scene, const Camera &camera) : m_scene(scene), m_camera(camera)
 {

@@ -7,24 +7,24 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 add_executable(
         rayTracer
         src/main.cpp
-        src/bmpIO.h
+		src/bmpIO.hpp
         src/bmpIO.cpp
-        src/camera.h
-        src/camera.cpp
-        src/object.h
+		src/tracer.hpp
+		src/tracer.cpp
+		src/object.hpp
         src/object.cpp
-        src/scene.h
+		src/scene.hpp
         src/scene.cpp
-        src/utils.h
+		src/utils.hpp
         src/utils.cpp
         src/shader.cpp
-        src/shader.h
+		src/shader.hpp
         src/intersectData.cpp
         src/intersectData.h
-        src/ray.h
-        src/material.h
+		src/ray.hpp
+		src/material.hpp
 		src/material.cpp
-        src/SceneViewer.cpp)
+        src/SceneViewer.cpp src/camera.hpp)
 
 target_include_directories(rayTracer
         PRIVATE

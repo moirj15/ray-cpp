@@ -1,8 +1,8 @@
 #ifndef INTERSECTDATA_H
 #define INTERSECTDATA_H
 
-#include "ray.h"
-#include "utils.h"
+#include "ray.hpp"
+#include "utils.hpp"
 
 struct IntersectData {
     glm::vec3 intersection{0, 0, 0};

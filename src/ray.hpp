@@ -1,7 +1,7 @@
 #ifndef RAY_H
 #define RAY_H
 
-#include "utils.h"
+#include "utils.hpp"
 
 // Ray object
 struct Ray {

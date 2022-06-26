@@ -1,4 +1,4 @@
-#include "utils.h"
+#include "utils.hpp"
 
 /**
  * Exits the program with EXIT_FAILURE and prints the given 

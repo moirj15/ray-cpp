@@ -1,6 +1,6 @@
-#include "object.h"
+#include "object.hpp"
 
-#include <glm/gtx/projection.hpp>
+#include "intersectData.h"
 
 /**
  * Checks for the Intersection of an object with the given ray, if there is

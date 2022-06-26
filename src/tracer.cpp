@@ -1,6 +1,9 @@
-#include "camera.h"
+#include "tracer.hpp"
 
-#include "bmpIO.h"
+#include "bmpIO.hpp"
+#include "camera.hpp"
+#include "object.hpp"
+#include "scene.hpp"
 
 #include <cmath>
 #include <glm/gtx/string_cast.hpp>
@@ -8,7 +11,7 @@
 namespace tracer
 {
 
-void Render(const Scene &scene, const Camera &camera, Frame &frame)
+void RenderFrame(const Scene &scene, const Camera &camera, Frame &frame)
 {
     std::vector<Ray> initial_rays;
     // TODO: This forces the origin ray to be coming from the top left of the screen
@@ -40,6 +43,7 @@ void Render(const Scene &scene, const Camera &camera, Frame &frame)
                     continue;
                 }
                 color += glm::abs(intersect_data.normal); //+= object->GetShader().Execute(intersect_data);
+//                color += object->GetShader().Execute(intersect_data);
 
                 for (const auto &light : scene.GetLights()) {
                     const auto surfToLight = glm::normalize(camera.eyepoint - intersect_data.intersection);
