@@ -14,12 +14,12 @@ glm::vec3 Phong::Execute(const IntersectData &id) const
 
         ambient = light.ambient * m_ambient_coef * m_ambient_mat;
         if (m_scene.InShadow(id)) {
-            ret_col += ambient;
+            ret_col = ambient;
         } else {
             diffuse = light.color * m_diffuse_coef * m_diffuse_mat * fmaxf(0.0, glm::dot(id.normal, surfToLight));
             specular = light.color * m_specular_coef * m_specular_mat
                        * powf(fmaxf(glm::dot(reflectionVec, viewVec), 0.0), m_specular_exp);
-            ret_col += ambient + diffuse + specular;
+            ret_col = ambient + diffuse + specular;
         }
     }
     return ret_col;

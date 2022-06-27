@@ -3,6 +3,7 @@
 
 #include "ray.hpp"
 #include "utils.hpp"
+class Object ;
 
 struct IntersectData {
     glm::vec3 intersection{0, 0, 0};
@@ -11,6 +12,7 @@ struct IntersectData {
     f32 v_coord = 0.0f;
     glm::vec4 triangle_points[3];
     Ray ray;
+    Object *hit_obj; // temp hack to protect against self intersections when casting reflection ray
 
     IntersectData() = default;
     IntersectData(const glm::vec3 &i, const glm::vec4 &n, f32 u, f32 v, Ray r) :

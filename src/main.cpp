@@ -31,11 +31,11 @@ int main(int argc, char **argv)
     Scene scene;
 
     const Light light(
-        glm::vec4(0.0f, 0.00f, 1.0f, 1.0f), glm::vec4(1.0f, 1.0f, 1.0f, 1.0f), glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
+        glm::vec4(0.0f, 0.00f, 10.0f, 1.0f), glm::vec4(1.0f, 1.0f, 1.0f, 1.0f), glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
     scene.AddLight(light);
 
-    Phong sphere_illum1(scene, 0.0f, 0.5f, 0.5f, 70.0f, 0.0f, 0.8f, ambient_mat, diffuse_mat, specular_mat);
-    Phong sphere_illum2(scene, 0.0f, 0.5f, 0.5f, 70.0f, 0.5f, 0.0f, ambient_mat, diffuse_mat, specular_mat);
+    Phong sphere_illum1(scene, 0.5f, 0.5f, 0.5f, 70.0f, 1.0f, 0.8f, ambient_mat, diffuse_mat, specular_mat);
+    Phong sphere_illum2(scene, 0.5f, 0.5f, 0.5f, 70.0f, 0.5f, 1.0f, ambient_mat, diffuse_mat, specular_mat);
 
     glm::vec4 color1(1.0, 0.0, 0.0, 0.0);
     glm::vec4 color2(1.0, 1.0, 0.0, 0.0);
@@ -62,10 +62,13 @@ int main(int argc, char **argv)
 
     auto plane_transform = glm::scale(glm::translate(glm::mat4(1.0), {0.0, -1.9, 0.0}), {10, 5, 10});
 
-    scene.AddObject(new Mesh(triangles, indices, &floor_illum), plane_transform);
+    FixedColor floor_color(glm::vec3(1.0, 0.0, 0.0));
+    scene.AddObject(new Mesh(triangles, indices, &floor_color), plane_transform);
 
     scene.AddObject(new Sphere(glm::vec4(-1.0f, 0.0f, 0.4f, 1.0f), 1.00f, &sphere_illum1));
     scene.AddObject(new Sphere(glm::vec4(0.3f, 0.3f, -0.3f, 1.0f), 0.8, &sphere_illum2));
+//    scene.AddObject(new Sphere(glm::vec4(-1.0f, 0.0f, 0.4f, 1.0f), 1.00f, &floor_color));
+//    scene.AddObject(new Sphere(glm::vec4(0.3f, 0.3f, -0.3f, 1.0f), 0.8, &floor_color));
 
     const glm::vec3 camera_pos(0.0f, 0.0f, 1.0f);
     const glm::vec3 look_at(0.0f, 0.0f, -1.0f);

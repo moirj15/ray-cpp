@@ -16,7 +16,7 @@ struct Light {
 
 class Shader
 {
-  public:
+public:
     virtual ~Shader() = default;
 
     [[nodiscard]] virtual glm::vec3 Execute(const IntersectData &id) const = 0;
@@ -24,7 +24,7 @@ class Shader
 
 class FixedShader : public Shader
 {
-  protected:
+protected:
     f32 m_ambient_coef;
     f32 m_specular_coef;
     f32 m_diffuse_coef;
@@ -33,7 +33,7 @@ class FixedShader : public Shader
 
     const Scene &m_scene;
 
-  public:
+public:
     f32 m_reflection_const;
     f32 m_refraction_const;
 
@@ -46,7 +46,16 @@ class FixedShader : public Shader
     }
     ~FixedShader() override = default;
 
-//    [[nodiscard]] virtual glm::vec3 Execute(const IntersectData &id) const = 0;
+    //    [[nodiscard]] virtual glm::vec3 Execute(const IntersectData &id) const = 0;
+};
+
+class FixedColor : public Shader
+{
+    glm::vec3 m_color;
+
+public:
+    explicit FixedColor(const glm::vec3 color) : m_color(color) {}
+    [[nodiscard]] glm::vec3 Execute(const IntersectData &id) const override { return m_color; }
 };
 
 class Phong : public FixedShader
@@ -55,7 +64,7 @@ class Phong : public FixedShader
     glm::vec3 m_diffuse_mat;
     glm::vec3 m_specular_mat;
 
-  public:
+public:
     Phong(const Scene &scene, f32 a_coef, f32 s_coef, f32 d_coef, f32 s_exp, f32 r_const, f32 t_const, glm::vec4 aM,
         glm::vec4 dM, glm::vec4 sM) :
             FixedShader(scene, a_coef, s_coef, d_coef, s_exp, r_const, t_const),
@@ -71,7 +80,7 @@ class CheckerBoard : public FixedShader
     glm::vec4 m_color1;
     glm::vec4 m_color2;
 
-  public:
+public:
     CheckerBoard(const Scene &scene, f32 a_coef, f32 s_coef, f32 d_coef, f32 s_exp, f32 r_const, f32 t_const,
         const glm::vec4 &c1, const glm::vec4 &c2) :
             FixedShader(scene, a_coef, s_coef, d_coef, s_exp, r_const, t_const),
@@ -81,6 +90,6 @@ class CheckerBoard : public FixedShader
 
     [[nodiscard]] glm::vec3 Execute(const IntersectData &id) const override;
 
-  private:
+private:
     glm::vec4 get_cube(const IntersectData &id) const;
 };

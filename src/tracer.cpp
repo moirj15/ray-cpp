@@ -27,12 +27,13 @@ void RenderFrame(const Scene &scene, const Camera &camera, Frame &frame)
             //            initial_rays.emplace_back(direction, look_at);
         }
     }
-    const u32 depth = 2;
+    const u32 depth = 1;
     for (s32 i = 0; i < initial_rays.size(); i++) {
         glm::vec3 color(0.0, 0.0, 0.0);
         std::vector<Ray> bounce_rays;
         bounce_rays.push_back(initial_rays[i]);
         std::vector<Ray> next_bounce;
+        bool no_hits = true;
         for (u32 d = 0; d < depth; d++) {
             for (const auto &ray : bounce_rays) {
                 IntersectData intersect_data;
@@ -42,8 +43,9 @@ void RenderFrame(const Scene &scene, const Camera &camera, Frame &frame)
                     //                    _frame.SetPixel(i, glm::vec4(1.0f, 1.0f, 1.0f, 1.0f)/* * lmax*/);
                     continue;
                 }
-                color += glm::abs(intersect_data.normal); //+= object->GetShader().Execute(intersect_data);
-//                color += object->GetShader().Execute(intersect_data);
+                no_hits = false;
+//                color += glm::abs(intersect_data.normal); //+= object->GetShader().Execute(intersect_data);
+                color += object->GetShader().Execute(intersect_data);
 
                 for (const auto &light : scene.GetLights()) {
                     const auto surfToLight = glm::normalize(camera.eyepoint - intersect_data.intersection);
@@ -53,6 +55,9 @@ void RenderFrame(const Scene &scene, const Camera &camera, Frame &frame)
             }
             std::swap(bounce_rays, next_bounce);
             next_bounce.clear();
+        }
+        if (no_hits) {
+            color = {0, 0, 1};
         }
         frame.SetPixel(i, glm::clamp(color, {0.0, 0.0, 0.0}, {1.0, 1.0, 1.0}));
     }

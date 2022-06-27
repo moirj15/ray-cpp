@@ -23,6 +23,7 @@ Object *Scene::CastRay(const Ray &ray, IntersectData &data, s32 check_obj) const
                 hit = object.get();
                 closest_distance = test_distance;
                 //                obj = (s32)i;
+                curr_data.hit_obj = object.get();
                 closest_data = curr_data;
             }
         }
@@ -34,13 +35,13 @@ Object *Scene::CastRay(const Ray &ray, IntersectData &data, s32 check_obj) const
 bool Scene::InShadow(const IntersectData &intersect_data) const
 {
     for (const auto &light : m_lights) {
-        const auto surfToLight = glm::normalize(light.position - intersect_data.intersection);
-        const auto viewVec = glm::normalize(-intersect_data.ray.direction);
-        const auto reflectionVec = glm::normalize(glm::reflect(-surfToLight, intersect_data.normal));
-        const Ray ray(intersect_data.intersection, reflectionVec);
+//        const auto surfToLight = glm::normalize(light.position - intersect_data.intersection);
+//        const auto viewVec = glm::normalize(-intersect_data.ray.direction);
+//        const auto reflectionVec = glm::normalize(glm::reflect(-surfToLight, intersect_data.normal));
+        const Ray ray(intersect_data.intersection, glm::normalize(light.position - intersect_data.intersection));
         IntersectData throw_away;
         for (const auto &object : m_objects) {
-            if (object->Intersect(ray, throw_away)) {
+            if (object.get() != intersect_data.hit_obj && object->Intersect(ray, throw_away)) {
                 return true;
             }
         }
