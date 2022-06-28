@@ -27,17 +27,20 @@ void RenderFrame(const Scene &scene, const Camera &camera, Frame &frame)
             //            initial_rays.emplace_back(direction, look_at);
         }
     }
-    const u32 depth = 1;
+    const u32 depth = 2;
     for (s32 i = 0; i < initial_rays.size(); i++) {
         glm::vec3 color(0.0, 0.0, 0.0);
         std::vector<Ray> bounce_rays;
         bounce_rays.push_back(initial_rays[i]);
         std::vector<Ray> next_bounce;
         bool no_hits = true;
+        Object *last_hit = nullptr;
         for (u32 d = 0; d < depth; d++) {
             for (const auto &ray : bounce_rays) {
                 IntersectData intersect_data;
+                intersect_data.hit_obj = last_hit;
                 auto *object = scene.CastRay(ray, intersect_data, -1);
+                last_hit = object;
 
                 if (!object) {
                     //                    _frame.SetPixel(i, glm::vec4(1.0f, 1.0f, 1.0f, 1.0f)/* * lmax*/);

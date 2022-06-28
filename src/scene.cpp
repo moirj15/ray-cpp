@@ -14,7 +14,7 @@ Object *Scene::CastRay(const Ray &ray, IntersectData &data, s32 check_obj) const
 
         IntersectData curr_data;
 
-        if (object->Intersect(ray, curr_data)) {
+        if (object.get() != data.hit_obj && object->Intersect(ray, curr_data)) {
             test_distance = glm::distance(ray.origin, curr_data.intersection);
             //            if ((check_obj > -1) && (i == (u64)check_obj)) {
             //                continue;
