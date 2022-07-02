@@ -7,6 +7,7 @@
 #include "shader.hpp"
 #include "tracer.hpp"
 #include "utils.hpp"
+#include "frame.hpp"
 // #include "SceneViewer.h"
 
 #include <cstdio>
@@ -76,7 +77,8 @@ int main(int argc, char **argv)
 
 
     scene.Transform(camera.camera_transform);
-    tracer::RenderFrame(scene, camera, frame);
+    Tracer tracer(scene, camera, frame);
+    tracer.RenderFrame();
 
     bmp::Write("test.bmp", frame);
     printf("finished\n");

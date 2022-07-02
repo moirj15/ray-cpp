@@ -1,6 +1,6 @@
 #include "bmpIO.hpp"
 
-#include "tracer.hpp"
+#include "frame.hpp"
 
 #include <SDL2/SDL.h>
 #include <vector>
