@@ -1,4 +1,3 @@
-#include "SDL2/SDL.h"
 #include "bmpIO.hpp"
 #include "camera.hpp"
 #include "material.hpp"
