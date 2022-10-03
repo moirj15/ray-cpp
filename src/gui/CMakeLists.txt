@@ -13,7 +13,6 @@ find_package(Qt6 COMPONENTS
 add_executable(qtRayTracer
         main.cpp)
 target_include_directories(qtRayTracer PRIVATE
-        ${CMAKE_SOURCE_DIR}/src/
         ${CMAKE_SOURCE_DIR}/libs/glm)
 target_link_libraries(qtRayTracer
         Qt::Core

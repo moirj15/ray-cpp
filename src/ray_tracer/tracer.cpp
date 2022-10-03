@@ -2,9 +2,10 @@
 
 #include "bmpIO.hpp"
 #include "camera.hpp"
-#include "object.hpp"
-#include "scene.hpp"
+#include "../geometry/object.hpp"
+#include "../geometry/scene.hpp"
 #include "frame.hpp"
+#include "../math/ray.hpp"
 
 #include <cmath>
 #include <glm/gtx/string_cast.hpp>

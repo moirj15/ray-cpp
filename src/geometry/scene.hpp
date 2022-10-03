@@ -17,6 +17,11 @@ public:
     Scene() = default;
     Scene(const Scene &) = delete;
     Scene &operator=(const Scene &) = delete;
+    Scene(Scene &&s) :
+            m_objects(std::move(s.m_objects)), m_object_transforms(std::move(s.m_object_transforms)),
+            m_lights(std::move(s.m_lights))
+    {
+    }
 
     void AddObject(Object *object, const glm::mat4 &transform = glm::mat4(1.0))
     {

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "utils.hpp"
+#include "../utils.hpp"
 
 #include <glm/mat4x4.hpp>
 #include <vector>

@@ -1,4 +1,5 @@
 #include "bmpIO.hpp"
+#include "../utils.hpp"
 
 #include "frame.hpp"
 

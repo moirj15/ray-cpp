@@ -1,6 +1,6 @@
 #pragma once
 
-#include "utils.hpp"
+#include "../utils.hpp"
 #include <vector>
 #include <glm/vec3.hpp>
 class Frame

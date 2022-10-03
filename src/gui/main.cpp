@@ -4,7 +4,7 @@
 #include <d3d11_3.h>
 #include <d3d11shader.h>
 #include <wrl/client.h>
-#include <utils.hpp>
+#include "../utils.hpp"
 #define Check(x) assert(SUCCEEDED(x))
 using Microsoft::WRL::ComPtr;
 class SceneViewer : public QWidget

@@ -1,7 +1,7 @@
 #pragma once
 
-#include "shader.hpp"
-#include "utils.hpp"
+#include "../geometry/shader.hpp"
+#include "../utils.hpp"
 
 #define WIDTH  600
 #define HEIGHT 400

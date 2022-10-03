@@ -2,7 +2,7 @@
 #include <d3dcompiler.h>
 class Scene;
 class Camera;
-#include "utils.hpp"
+#include "../utils.hpp"
 
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_syswm.h>

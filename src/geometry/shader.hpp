@@ -1,6 +1,7 @@
 #pragma once
 
-#include "intersectData.h"
+//TODO: Figure out what to do with this structure
+#include "../intersectData.h"
 
 #include <glm/glm.hpp>
 

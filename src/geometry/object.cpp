@@ -1,6 +1,6 @@
 #include "object.hpp"
 
-#include "intersectData.h"
+#include "../intersectData.h"
 
 /**
  * Checks for the Intersection of an object with the given ray, if there is

@@ -1,7 +1,7 @@
 #include "scene.hpp"
 
-#include "intersectData.h"
-#include "ray.hpp"
+#include "../intersectData.h"
+#include "../math/ray.hpp"
 
 Object *Scene::CastRay(const Ray &ray, IntersectData &data, s32 check_obj) const
 {

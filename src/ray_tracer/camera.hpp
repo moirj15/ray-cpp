@@ -1,6 +1,6 @@
 #pragma once
 
-#include "utils.hpp"
+#include "../utils.hpp"
 
 #include <glm/ext/matrix_transform.hpp>
 #include <glm/vec3.hpp>

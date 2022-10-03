@@ -1,12 +1,13 @@
 #include "bmpIO.hpp"
 #include "camera.hpp"
-#include "material.hpp"
-#include "object.hpp"
-#include "scene.hpp"
-#include "shader.hpp"
+#include "../geometry/material.hpp"
+#include "../geometry/object.hpp"
+#include "../geometry/scene.hpp"
+#include "../geometry/shader.hpp"
 #include "tracer.hpp"
-#include "utils.hpp"
+#include "../utils.hpp"
 #include "frame.hpp"
+#include "../importer/scene_importer.hpp"
 // #include "SceneViewer.h"
 
 #include <cstdio>
@@ -28,7 +29,9 @@ int main(int argc, char **argv)
     (void)argv;
 
     printf("start\n");
-    Scene scene;
+//    Scene scene;
+    Importer importer{"test-obj/block.obj"};
+    Scene scene = importer.Import();
 
     const Light light(
         glm::vec4(0.0f, 10.00f, 10.0f, 1.0f), glm::vec4(1.0f, 1.0f, 1.0f, 1.0f), glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
@@ -63,10 +66,10 @@ int main(int argc, char **argv)
     auto plane_transform = glm::scale(glm::translate(glm::mat4(1.0), {0.0, -1.9, 0.0}), {10, 5, 10});
 
     FixedColor floor_color(glm::vec3(1.0, 0.0, 0.0));
-    scene.AddObject(new Mesh(triangles, indices, &sphere_illum1), plane_transform);
-
-    scene.AddObject(new Sphere(glm::vec4(-1.0f, 0.0f, 0.4f, 1.0f), 1.00f, &sphere_illum1));
-    scene.AddObject(new Sphere(glm::vec4(0.3f, 0.3f, -0.3f, 1.0f), 0.8, &sphere_illum2));
+//    scene.AddObject(new Mesh(triangles, indices, &sphere_illum1), plane_transform);
+//
+//    scene.AddObject(new Sphere(glm::vec4(-1.0f, 0.0f, 0.4f, 1.0f), 1.00f, &sphere_illum1));
+//    scene.AddObject(new Sphere(glm::vec4(0.3f, 0.3f, -0.3f, 1.0f), 0.8, &sphere_illum2));
 
     const glm::vec3 camera_pos(0.0f, 0.0f, 1.0f);
     const glm::vec3 look_at(0.0f, 0.0f, -1.0f);
