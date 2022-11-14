@@ -1,14 +1,22 @@
 add_library(d3dViewerLib STATIC
-        SceneViewer.cpp)
+        SceneViewer.cpp
+        ConstantManager.cpp
+        MovementManager.cpp
+        Renderer.cpp
+        ResourceManager.cpp
+        )
 
 target_include_directories(d3dViewerLib PRIVATE
-        ${CMAKE_SOURCE_DIR}/libs/SDL2/include
         ${CMAKE_SOURCE_DIR}/libs/glm/
-
         )
 
 add_executable(d3d_viewer
         main.cpp )
+
+target_include_directories(d3d_viewer PRIVATE
+        ${CMAKE_SOURCE_DIR}/libs/SDL2/include
+        ${CMAKE_SOURCE_DIR}/libs/glm/
+)
 
 target_link_libraries(d3d_viewer PRIVATE
         d3dViewerLib

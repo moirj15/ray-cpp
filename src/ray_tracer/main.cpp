@@ -1,13 +1,13 @@
-#include "bmpIO.hpp"
-#include "camera.hpp"
 #include "../geometry/material.hpp"
 #include "../geometry/object.hpp"
 #include "../geometry/scene.hpp"
 #include "../geometry/shader.hpp"
-#include "tracer.hpp"
-#include "../utils.hpp"
-#include "frame.hpp"
 #include "../importer/scene_importer.hpp"
+#include "../utils.hpp"
+#include "bmpIO.hpp"
+#include "camera.hpp"
+#include "frame.hpp"
+#include "tracer.hpp"
 // #include "SceneViewer.h"
 
 #include <cstdio>
@@ -29,7 +29,7 @@ int main(int argc, char **argv)
     (void)argv;
 
     printf("start\n");
-//    Scene scene;
+    //    Scene scene;
     Importer importer{"test-obj/block.obj"};
     Scene scene = importer.Import();
 
@@ -53,10 +53,13 @@ int main(int argc, char **argv)
     triangles.emplace_back(1.0, 0.0, -1.0);  // tr
 
     std::vector<u32> indices = {
-        0, 1, 2,
-        0, 2, 3,
+        0,
+        1,
+        2,
+        0,
+        2,
+        3,
     };
-
 
     for (auto &p : triangles) {
         auto t = glm::translate(glm::mat4(1.0), {0.0, -1.9, 0.0});
@@ -66,17 +69,16 @@ int main(int argc, char **argv)
     auto plane_transform = glm::scale(glm::translate(glm::mat4(1.0), {0.0, -1.9, 0.0}), {10, 5, 10});
 
     FixedColor floor_color(glm::vec3(1.0, 0.0, 0.0));
-//    scene.AddObject(new Mesh(triangles, indices, &sphere_illum1), plane_transform);
-//
-//    scene.AddObject(new Sphere(glm::vec4(-1.0f, 0.0f, 0.4f, 1.0f), 1.00f, &sphere_illum1));
-//    scene.AddObject(new Sphere(glm::vec4(0.3f, 0.3f, -0.3f, 1.0f), 0.8, &sphere_illum2));
+    //    scene.AddObject(new Mesh(triangles, indices, &sphere_illum1), plane_transform);
+    //
+    //    scene.AddObject(new Sphere(glm::vec4(-1.0f, 0.0f, 0.4f, 1.0f), 1.00f, &sphere_illum1));
+    //    scene.AddObject(new Sphere(glm::vec4(0.3f, 0.3f, -0.3f, 1.0f), 0.8, &sphere_illum2));
 
     const glm::vec3 camera_pos(0.0f, 0.0f, 1.0f);
     const glm::vec3 look_at(0.0f, 0.0f, -1.0f);
     const glm::vec3 up_vec(0.0f, 1.0f, 0.0f);
     Camera camera(camera_pos, look_at, up_vec, film_plane_width, film_plane_height, 1.0f);
     Frame frame(600, 400);
-
 
     scene.Transform(camera.camera_transform);
     Tracer tracer(scene, camera, frame);

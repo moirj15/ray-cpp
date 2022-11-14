@@ -58,7 +58,7 @@ Scene Importer::Import()
             SkipLine();
         } else if (token == "f") {
             string_view chunk = ConsumeToken();
-            if (size_t slash_index = chunk.find_last_of("/"); slash_index != string_view::npos) {
+            if (size_t slash_index = chunk.find_last_of('/'); slash_index != string_view::npos) {
                 // TODO: Ignore the normal indices for now
                 vert_indices.emplace_back(std::stoi(std::string(chunk.substr(0, slash_index - 1))) - 1);
                 tex_indices.emplace_back(std::stoi(std::string(chunk.substr(slash_index + 1))) - 1);

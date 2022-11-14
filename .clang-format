@@ -1,17 +1,18 @@
 ﻿---
-AccessModifierOffset: '-4'
+AccessModifierOffset: -4
 AlignAfterOpenBracket: DontAlign
 AlignConsecutiveMacros: 'true'
-AlignConsecutiveAssignments: 'false'
+AlignConsecutiveAssignments: true
+AlignConsecutiveDeclarations: Consecutive
 AlignEscapedNewlines: Right
 AlignOperands: 'true'
 AlignTrailingComments: 'true'
+AllowShortFunctionsOnASingleLine: None
 AllowAllArgumentsOnNextLine: 'true'
 AllowAllConstructorInitializersOnNextLine: 'false'
 AllowAllParametersOfDeclarationOnNextLine: 'true'
 AllowShortBlocksOnASingleLine: 'false'
 AllowShortCaseLabelsOnASingleLine: 'false'
-AllowShortFunctionsOnASingleLine: InlineOnly
 AllowShortIfStatementsOnASingleLine: Never
 AllowShortLambdasOnASingleLine: All
 AllowShortLoopsOnASingleLine: 'false'
@@ -26,10 +27,10 @@ BreakBeforeBraces: Linux
 BreakConstructorInitializers: AfterColon
 BreakInheritanceList: AfterColon
 BreakStringLiterals: 'true'
-ColumnLimit: '120'
+ColumnLimit: '160'
 CompactNamespaces: 'true'
 ConstructorInitializerAllOnOneLineOrOnePerLine: 'false'
-ConstructorInitializerIndentWidth: '8'
+ConstructorInitializerIndentWidth: '4'
 ContinuationIndentWidth: '4'
 Cpp11BracedListStyle: 'true'
 DerivePointerAlignment: 'false'
@@ -62,5 +63,3 @@ SpacesInContainerLiterals: 'false'
 SpacesInParentheses: 'false'
 SpacesInSquareBrackets: 'false'
 Standard: Cpp11
-
-...

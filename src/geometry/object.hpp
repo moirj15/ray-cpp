@@ -96,5 +96,6 @@ public:
     bool Intersect(const Ray &r, IntersectData &id) const override;
     void Transform(const glm::mat4 &transform) override;
 
-    [[nodiscard]] const std::vector<glm::vec3> GetVertices() const { return m_vertices; }
+    const std::vector<glm::vec3> &GetVertices() const { return m_vertices; }
+    const std::vector<u32> &GetIndices() const { return m_indices; }
 };
