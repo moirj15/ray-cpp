@@ -1,5 +1,6 @@
 #include "SceneViewer.hpp"
 
+#include "../Camera.h"
 #include "../geometry/scene.hpp"
 
 namespace sv
@@ -98,11 +99,12 @@ RenderContext::RenderContext(HWND window_handle, u32 window_width, u32 window_he
     m_context->OMSetRenderTargets(1, m_backbuffer_render_target_view.GetAddressOf(), m_depth_stencil_view.Get());
 }
 
-
-
-
-SceneViewer::SceneViewer(const Window &window, const Scene &scene, const Camera &camera) :
-    m_scene(scene), m_camera(camera), m_ctx(window.handle, window.width, window.height), m_resource_manager(&m_ctx), m_renderer(m_ctx, m_resource_manager)
+SceneViewer::SceneViewer(const Window &window, const Scene &scene, Camera &camera) :
+    m_scene(scene),
+    m_camera(camera),
+    m_ctx(window.handle, window.width, window.height),
+    m_resource_manager(m_ctx),
+    m_renderer(m_ctx, m_resource_manager)
 {
     // TODO: be careful about setting this to something else down the road. Currently not checking for changes
     m_viewport = {
@@ -121,8 +123,21 @@ void SceneViewer::SetupScene(const Scene &scene)
 {
 }
 
+void SceneViewer::MoveCamera(const glm::vec3 &target)
+{
+    m_camera.Move(target);
+}
+
+void SceneViewer::RotateCamera(const glm::vec2 &rotation)
+{
+    m_camera.Rotate(rotation);
+}
+
 void SceneViewer::Tick()
 {
+    if (m_camera.IsDirty()) {
+        m_resource_manager.UpdateCameraMatrix(m_camera.CalculateMatrix());
+    }
 }
 
 void SceneViewer::SwapBuffers()

@@ -8,12 +8,12 @@ class ResourceManager;
 
 class Renderer
 {
-    RenderContext   &m_ctx;
-    ResourceManager &m_resource_manager;
+    RenderContext         &m_ctx;
+    const ResourceManager &m_resource_manager;
 
 public:
-    explicit Renderer(RenderContext &ctx, ResourceManager &rm);
+    explicit Renderer(RenderContext &ctx, const ResourceManager &rm);
     void DrawScene();
 };
 
-}
+} // namespace sv

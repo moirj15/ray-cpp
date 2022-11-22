@@ -9,6 +9,7 @@ class Camera;
 #include <d3d11shader.h>
 #include <glm/mat4x4.hpp>
 #include <glm/vec3.hpp>
+#include <glm/vec2.hpp>
 #include <unordered_map>
 #include <vector>
 #include <wrl/client.h>
@@ -45,14 +46,10 @@ struct Mesh {
     glm::vec3 pos;
 };
 
-
-
-
-
 class SceneViewer
 {
     const Scene  &m_scene;
-    const Camera &m_camera;
+    Camera &m_camera;
 
     RenderContext   m_ctx;
     ResourceManager m_resource_manager;
@@ -66,9 +63,12 @@ class SceneViewer
     D3D11_VIEWPORT m_viewport;
 
 public:
-    explicit SceneViewer(const Window &window, const Scene &scene, const Camera &camera);
+    explicit SceneViewer(const Window &window, const Scene &scene, Camera &camera);
 
     void SetupScene(const Scene &scene);
+
+    void MoveCamera(const glm::vec3 &target);
+    void RotateCamera(const glm::vec2 &rotation);
 
     void Tick();
     void SwapBuffers();

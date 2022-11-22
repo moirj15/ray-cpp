@@ -4,7 +4,7 @@
 namespace sv
 {
 
-Renderer::Renderer(RenderContext &ctx, ResourceManager &rm) : m_ctx(ctx), m_resource_manager(rm)
+Renderer::Renderer(RenderContext &ctx, const ResourceManager &rm) : m_ctx(ctx), m_resource_manager(rm)
 {
 }
 
