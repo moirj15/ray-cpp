@@ -3,18 +3,19 @@
 class Scene;
 class Camera;
 #include "../utils.hpp"
+#include "Renderer.hpp"
+#include "ResourceManager.hpp"
+#include "Shaders.hpp"
 
 #include <Windows.h>
 #include <d3d11_3.h>
 #include <d3d11shader.h>
 #include <glm/mat4x4.hpp>
-#include <glm/vec3.hpp>
 #include <glm/vec2.hpp>
+#include <glm/vec3.hpp>
 #include <unordered_map>
 #include <vector>
 #include <wrl/client.h>
-#include "ResourceManager.hpp"
-#include "Renderer.hpp"
 
 struct Window {
     HWND handle;
@@ -48,11 +49,12 @@ struct Mesh {
 
 class SceneViewer
 {
-    const Scene  &m_scene;
-    Camera &m_camera;
+    const Scene &m_scene;
+    Camera      &m_camera;
 
     RenderContext   m_ctx;
     ResourceManager m_resource_manager;
+    Shaders         m_shaders;
     Renderer        m_renderer;
 
     struct ObjectConstants {

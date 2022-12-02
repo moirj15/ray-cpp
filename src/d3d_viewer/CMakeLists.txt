@@ -1,10 +1,10 @@
 add_library(d3dViewerLib STATIC
         SceneViewer.cpp
-        
-        
         Renderer.cpp
         ResourceManager.cpp
+        Shaders.cpp
         ../Camera.cpp
+        ../file_io.cpp
         )
 
 target_include_directories(d3dViewerLib PRIVATE

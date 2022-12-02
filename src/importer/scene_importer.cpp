@@ -1,6 +1,6 @@
 #include "scene_importer.hpp"
 
-#include "file_io.hpp"
+#include "../file_io.hpp"
 
 #include <cstdio>
 

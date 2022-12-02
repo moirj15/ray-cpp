@@ -104,7 +104,8 @@ SceneViewer::SceneViewer(const Window &window, const Scene &scene, Camera &camer
     m_camera(camera),
     m_ctx(window.handle, window.width, window.height),
     m_resource_manager(m_ctx),
-    m_renderer(m_ctx, m_resource_manager)
+    m_shaders(m_ctx),
+    m_renderer(m_ctx, m_resource_manager, m_shaders)
 {
     // TODO: be careful about setting this to something else down the road. Currently not checking for changes
     m_viewport = {

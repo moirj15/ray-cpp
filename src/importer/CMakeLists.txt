@@ -1,7 +1,7 @@
 add_library(importerLib
         STATIC
         scene_importer.cpp
-        file_io.cpp
+        "../file_io.cpp"
         )
 
 target_include_directories(importerLib
