@@ -12,33 +12,29 @@ struct RenderContext;
 struct Buffer {
     ComPtr<ID3D11Buffer> buffer;
     u32                  size           = 0;
-    u32                  element_stride = 0;
     u32                  offsets        = 0;
+    u32                  element_stride = 0;
 
     void Clear();
 };
 
-MAKE_HANDLE(ConstantHandle);
+struct IndexBuffer {
+    ComPtr<ID3D11Buffer> buffer;
+    u32                  byte_size = 0;
+    u32                  count     = 0;
+};
 
 class ResourceManager
 {
     RenderContext &m_ctx;
 
-    Buffer m_vertices;
-    Buffer m_indices;
+    std::vector<Buffer>               m_vertex_buffers;
+    std::vector<IndexBuffer>          m_index_buffers;
+    std::vector<ComPtr<ID3D11Buffer>> m_constant_buffers;
+    ComPtr<ID3D11Buffer>              m_static_constants;
 
-    struct MeshSection {
-        ConstantHandle handle;
-        u32            vertex_start;
-        u32            index_start;
-    };
-
-    std::vector<MeshSection>                   m_sections;
-    std::unordered_map<ConstantHandle, Buffer> m_constant_buffs;
-
-    Buffer m_camera_buf;
-
-    ConstantHandle m_next_handle;
+    glm::mat4 m_projection;
+    glm::mat4 m_camera;
 
 public:
     explicit ResourceManager(RenderContext &ctx);
@@ -48,35 +44,28 @@ public:
 
     void ClearMeshes();
 
-    const ID3D11Buffer *GetVertexBuffer() const
+    const std::vector<Buffer> &GetVertexBuffers() const
     {
-        return m_vertices.buffer.Get();
+        return m_vertex_buffers;
     }
 
-    const ID3D11Buffer *GetIndexBuffer() const
+    const std::vector<IndexBuffer> &GetIndexBuffers() const
     {
-        return m_indices.buffer.Get();
+        return m_index_buffers;
     }
 
-    const ID3D11Buffer *GetConstantBuffer() const
+    const std::vector<ComPtr<ID3D11Buffer>> &GetConstantBuffers() const
     {
-        return m_camera_buf.buffer.Get();
+        return m_constant_buffers;
     }
 
-    const std::vector<MeshSection> &GetSections() const
+    ID3D11Buffer *GetStaticConstants() const
     {
-        return m_sections;
-    }
-
-    const Buffer &GetConstantBuffer(const ConstantHandle handle)
-    {
-        // Shouldn't produce a default Buffer object. Assuming the handle comes from an entry in the m_sections vector.
-        return m_constant_buffs[handle];
+        return m_static_constants.Get();
     }
 
 private:
-    Buffer AllocateBuffer(const void *data, const u32 size, D3D11_USAGE usage, D3D11_BIND_FLAG bind_flag);
-    void   PushBack(Buffer &buffer, const void *data, const size_t size, D3D11_BIND_FLAG bind_flag);
+    ID3D11Buffer *AllocateBuffer(const void *data, const u32 size, D3D11_USAGE usage, D3D11_BIND_FLAG bind_flag);
 };
 
 } // namespace sv

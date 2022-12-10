@@ -15,7 +15,6 @@ class Renderer
     const ResourceManager &m_resource_manager;
     const Shaders         &m_shaders;
 
-
     ComPtr<ID3D11RasterizerState> m_state;
 
 public:

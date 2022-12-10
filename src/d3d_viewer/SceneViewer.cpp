@@ -2,6 +2,7 @@
 
 #include "../Camera.h"
 #include "../geometry/scene.hpp"
+#include "../geometry/object.hpp"
 
 namespace sv
 {
@@ -118,6 +119,13 @@ SceneViewer::SceneViewer(const Window &window, const Scene &scene, Camera &camer
     };
 
     m_ctx.m_context->RSSetViewports(1, &m_viewport);
+
+    for (const auto &object : m_scene.GetObjects()) {
+        if (object->type == Object::Type::Mesh) {
+            auto *mesh = reinterpret_cast<::Mesh *>(object.get());
+            m_resource_manager.AddMesh(mesh->GetVertices(), mesh->GetIndices());
+        }
+    }
 }
 
 void SceneViewer::SetupScene(const Scene &scene)
@@ -139,10 +147,13 @@ void SceneViewer::Tick()
     if (m_camera.IsDirty()) {
         m_resource_manager.UpdateCameraMatrix(m_camera.CalculateMatrix());
     }
+    m_renderer.DrawScene();
 }
 
 void SceneViewer::SwapBuffers()
 {
+    m_ctx.m_swapchain->Present(1, 0);
+    m_ctx.m_context->ClearDepthStencilView(m_ctx.m_depth_stencil_view.Get(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0, 0);
 }
 
 } // namespace sv

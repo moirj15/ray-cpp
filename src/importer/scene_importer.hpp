@@ -4,6 +4,7 @@
 #include <string>
 #include <string_view>
 
+#if 0
 class Importer
 {
     std::string m_file;
@@ -17,4 +18,15 @@ private:
     std::string_view ConsumeToken();
 
     void SkipLine();
+};
+#endif
+
+class Importer
+{
+    std::string m_filepath;
+
+public:
+    explicit Importer(const std::string &path);
+
+    Scene Import();
 };

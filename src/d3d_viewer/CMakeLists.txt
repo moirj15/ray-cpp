@@ -17,10 +17,14 @@ add_executable(d3d_viewer
 target_include_directories(d3d_viewer PRIVATE
         ${CMAKE_SOURCE_DIR}/libs/SDL2/include
         ${CMAKE_SOURCE_DIR}/libs/glm/
+        geometryLib
+        importerLib
 )
 
 target_link_libraries(d3d_viewer PRIVATE
         d3dViewerLib
+        importerLib
+        geometryLib
         ${CMAKE_SOURCE_DIR}/libs/sdl2/SDL2-static.lib
         ${CMAKE_SOURCE_DIR}/libs/sdl2/SDL2main.lib
         gdi32.lib

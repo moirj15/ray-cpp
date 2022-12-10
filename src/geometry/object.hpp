@@ -79,7 +79,7 @@ class Mesh final : public Object
     std::vector<u32> m_indices;
 
 public:
-    Mesh(std::vector<glm::vec3> &v, std::vector<u32> indices, Shader *i) : Object(i, Type::Mesh), m_vertices(std::move(v)), m_indices(std::move(indices)) {}
+    Mesh(std::vector<glm::vec3> &&v, std::vector<u32> &&indices, Shader *i) : Object(i, Type::Mesh), m_vertices(v), m_indices(indices) {}
 
     /**
      * Checks for the Intersection of an object with the given ray, if there is

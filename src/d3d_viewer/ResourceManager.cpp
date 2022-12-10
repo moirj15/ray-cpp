@@ -14,56 +14,53 @@ void Buffer::Clear()
     size = 0;
 }
 
-struct CameraConstants {
-    glm::mat4 projection_view;
+struct Constants {
+    glm::mat4 view_projection;
 };
 
-struct MeshConstants {
-    glm::mat4 transform;
+struct ModelConstants {
+    glm::mat4 model_transform;
 };
 
-ResourceManager::ResourceManager(RenderContext &ctx) :
-    m_ctx(ctx),
-    m_camera_buf(AllocateBuffer(nullptr, sizeof(CameraConstants), D3D11_USAGE_DEFAULT, D3D11_BIND_CONSTANT_BUFFER))
+ResourceManager::ResourceManager(RenderContext &ctx) : m_ctx(ctx), m_projection(glm::infinitePerspective(90.0f, 16.0f / 9.0f, 0.001f))
 {
+    const Constants constants = {.view_projection = m_projection * m_camera};
+    m_static_constants        = AllocateBuffer(static_cast<const void *>(&constants), sizeof(Constants), D3D11_USAGE_DEFAULT, D3D11_BIND_CONSTANT_BUFFER);
 }
 
 void ResourceManager::AddMesh(const std::vector<glm::vec3> &vertices, const std::vector<u32> &indices, const glm::mat4 &transform)
 {
-    m_next_handle++;
-    MeshSection section = {
-        .handle       = m_next_handle,
-        .vertex_start = m_vertices.size / sizeof(glm::vec3),
-        .index_start  = m_indices.size / sizeof(u32),
-    };
-    PushBack(m_vertices, static_cast<const void *>(vertices.data()), vertices.size() * sizeof(glm::vec3), D3D11_BIND_VERTEX_BUFFER);
-    PushBack(m_indices, static_cast<const void *>(indices.data()), indices.size() * sizeof(u32), D3D11_BIND_INDEX_BUFFER);
-    m_constant_buffs.emplace(
-        section.handle, AllocateBuffer(static_cast<const void *>(&transform), sizeof(MeshConstants), D3D11_USAGE_DEFAULT, D3D11_BIND_CONSTANT_BUFFER));
-    m_sections.emplace_back(section);
+    m_vertex_buffers.emplace_back(Buffer{
+        .buffer         = AllocateBuffer(vertices.data(), vertices.size() * sizeof(glm::vec3), D3D11_USAGE_DEFAULT, D3D11_BIND_VERTEX_BUFFER),
+        .size           = static_cast<u32>(vertices.size() * sizeof(glm::vec3)),
+        .offsets        = 0,
+        .element_stride = sizeof(glm::vec3),
+    });
+    m_index_buffers.emplace_back(IndexBuffer{
+        .buffer = AllocateBuffer(indices.data(), indices.size() * sizeof(u32), D3D11_USAGE_DEFAULT, D3D11_BIND_INDEX_BUFFER),
+        .byte_size = static_cast<u32>(indices.size() * sizeof(u32)),
+        .count = static_cast<u32>(indices.size()),
+    });
+    ModelConstants model_constants = {.model_transform = transform};
+    m_constant_buffers.emplace_back(
+        AllocateBuffer(static_cast<const void *>(&model_constants), sizeof(model_constants), D3D11_USAGE_DEFAULT, D3D11_BIND_CONSTANT_BUFFER));
 }
 
 void ResourceManager::ClearMeshes()
 {
-    m_vertices.Clear();
-    m_indices.Clear();
-    m_sections.clear();
-    m_constant_buffs.clear();
-    m_camera_buf.Clear();
-    m_next_handle = ConstantHandle::Invalid();
+    m_vertex_buffers.clear();
+    m_index_buffers.clear();
+    m_constant_buffers.clear();
 }
 
 void ResourceManager::UpdateCameraMatrix(const glm::mat4 &camera)
 {
-    const glm::mat4 PROJECTION = glm::infinitePerspective(90.0, 16.0 / 9.0, 0.001);
-
-    CameraConstants constants = {
-        .projection_view = PROJECTION * camera,
-    };
-    m_ctx.m_context->UpdateSubresource(m_camera_buf.buffer.Get(), 0, nullptr, static_cast<const void *>(&constants), sizeof(CameraConstants), 0);
+    m_camera                  = camera;
+    const Constants constants = {.view_projection = m_projection * m_camera};
+    m_ctx.m_context->UpdateSubresource(m_static_constants.Get(), 0, nullptr, static_cast<const void *>(&constants), sizeof(constants), 0);
 }
 
-Buffer ResourceManager::AllocateBuffer(const void *data, const u32 size, D3D11_USAGE usage, D3D11_BIND_FLAG bind_flag)
+ID3D11Buffer *ResourceManager::AllocateBuffer(const void *data, const u32 size, D3D11_USAGE usage, D3D11_BIND_FLAG bind_flag)
 {
     ID3D11Buffer     *buffer      = nullptr;
     D3D11_BUFFER_DESC buffer_desc = {
@@ -84,18 +81,6 @@ Buffer ResourceManager::AllocateBuffer(const void *data, const u32 size, D3D11_U
     } else {
         Check(m_ctx.m_device->CreateBuffer(&buffer_desc, nullptr, &buffer));
     }
-    return {.buffer = buffer, .size = size};
-}
-
-void ResourceManager::PushBack(Buffer &buffer, const void *data, const size_t size, D3D11_BIND_FLAG bind_flag)
-{
-    if (buffer.size > 0) {
-        Buffer temp = AllocateBuffer(nullptr, size, D3D11_USAGE_DEFAULT, bind_flag);
-        // TODO: this might not work. Might have to use CopySubresourceRegion()
-        m_ctx.m_context->CopyResource(buffer.buffer.Get(), temp.buffer.Get());
-        m_ctx.m_context->UpdateSubresource(temp.buffer.Get(), 0, nullptr, data, size, 0);
-    } else {
-        buffer = AllocateBuffer(data, size, D3D11_USAGE_DEFAULT, bind_flag);
-    }
+    return buffer;
 }
 } // namespace sv

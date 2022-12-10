@@ -1,9 +1,45 @@
 #include "scene_importer.hpp"
-
+#define TINYOBJLOADER_IMPLEMENTATION
 #include "../file_io.hpp"
+#include "tiny_obj_loader.h"
 
+#include <cassert>
 #include <cstdio>
+#include <vector>
 
+Importer::Importer(const std::string &path) : m_filepath(path)
+{
+}
+
+Scene Importer::Import()
+{
+    tinyobj::ObjReader reader;
+    assert(reader.ParseFromFile(m_filepath));
+
+    const tinyobj::attrib_t             &attrib = reader.GetAttrib();
+    const std::vector<tinyobj::shape_t> &shapes = reader.GetShapes();
+
+    std::vector<u32>       indices;
+    std::vector<glm::vec3> vertices;
+
+    for (const auto &shape : shapes) {
+        for (const auto &index : shape.mesh.indices) {
+            indices.emplace_back(index.vertex_index);
+        }
+    }
+    for (size_t i = 0; i < attrib.vertices.size(); i += 3) {
+        vertices.emplace_back(attrib.vertices[i], attrib.vertices[i + 1], attrib.vertices[i + 2]);
+    }
+
+    Scene scene;
+
+    auto *mesh = new Mesh(std::move(vertices), std::move(indices), nullptr);
+    scene.AddObject(mesh);
+
+    return scene;
+}
+
+#if 0
 // namespace parse_utils
 //{
 //
@@ -96,3 +132,4 @@ void Importer::SkipLine()
 {
     m_index = m_file.find("\n", m_index) + 1;
 }
+#endif
