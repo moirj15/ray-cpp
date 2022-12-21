@@ -1,10 +1,9 @@
-#ifndef PIPELINE_H
-#define PIPELINE_H
-
-#include "utils.h"
+#pragma once
 #include "canvas.h"
-struct Camera
+#include "utils.h"
+namespace ra
 {
+struct Camera {
     glm::vec3 eyePoint;
     glm::vec3 lookAt;
     glm::vec3 upVec;
@@ -14,61 +13,57 @@ struct Camera
     glm::mat4 modelMat;
 
     /**
-    * Constructor.
-    */
+     * Constructor.
+     */
     Camera(void);
 
     /**
-    * Constructor.
-    *
-    * @param e: The eyepoint.
-    * @param l: The look-up vector.
-    * @param u: The up vector.
-    * @param width: Width of the viewing plane.
-    * @param height: Height of the viewing plane.
-    * @param fov: Field of view.
-    * @param near: Near plane z-value.
-    * @param far: Far plane z-value.
-    */
-    Camera(glm::vec3 e, glm::vec3 l, glm::vec3 u, u32 width, u32 height,
-        f32 fov, f32 near, f32 far) : eyePoint(e), lookAt(l), upVec(u)
+     * Constructor.
+     *
+     * @param e: The eyepoint.
+     * @param l: The look-up vector.
+     * @param u: The up vector.
+     * @param width: Width of the viewing plane.
+     * @param height: Height of the viewing plane.
+     * @param fov: Field of view.
+     * @param near: Near plane z-value.
+     * @param far: Far plane z-value.
+     */
+    Camera(glm::vec3 e, glm::vec3 l, glm::vec3 u, u32 width, u32 height, f32 fov, f32 near, f32 far) : eyePoint(e), lookAt(l), upVec(u)
     {
         projection = glm::perspective(fov, (f32)width / (f32)height, near, far);
-        cameraMat = glm::lookAt(eyePoint, eyePoint + lookAt, upVec);
-        modelMat = glm::mat4(1.0f); // no model transforms for now
+        cameraMat  = glm::lookAt(eyePoint, eyePoint + lookAt, upVec);
+        modelMat   = glm::mat4(1.0f); // no model transforms for now
     }
 
-    ~Camera(void) {}
-
+    ~Camera(void)
+    {
+    }
 };
 
-struct VBO
-{
-    std::vector<glm::vec4> 	vertexList;
-    std::vector<u64>		connections;
+struct VBO {
+    std::vector<glm::vec4> vertexList;
+    std::vector<u64>       connections;
 
-    VBO(void) {};
-    VBO(std::vector<glm::vec4> v, std::vector<u64> c) : vertexList(v), 
-        connections(c) {};
+    VBO(void){};
+    VBO(std::vector<glm::vec4> v, std::vector<u64> c) : vertexList(v), connections(c){};
 
-    ~VBO(void) {};
+    ~VBO(void){};
 };
 
-struct Light
-{
+struct Light {
     glm::vec4 pos;
     glm::vec4 color;
     glm::vec4 ambient;
 };
 
-struct Material
-{
+struct Material {
     glm::vec4 ambient_material;
     glm::vec4 diffuse_material;
     glm::vec4 specular_material;
 
     f32 ambient_coef;
-	f32 diffuse_coef;
+    f32 diffuse_coef;
     f32 specular_coef;
     f32 specular_exp;
 };
@@ -82,8 +77,7 @@ struct Material
  * @param mat: The triangle's material.
  * @return: The color of the triangle after lighting.
  */
-u32 phong_light(std::vector<glm::vec4> triangle, const Light &light,
-                const Material &mat);
+u32 phong_light(std::vector<glm::vec4> triangle, const Light &light, const Material &mat);
 
 // @IMPL: triangulation.cpp
 /**
@@ -102,12 +96,11 @@ VBO triangulate(std::vector<glm::vec4> polygon);
  * @param camera: The camera viewing the object.
  * @param light: The scene's light.
  * @param mat: The material of the object.
- * @param colors: The list of colors that will be filled after lighting the 
+ * @param colors: The list of colors that will be filled after lighting the
  * triangles.
  * @return: The list of 2D triangles.
  */
-VBO transform_to_2D(VBO object, Camera *camera, const Light &light,
-                    const Material &mat, std::vector<u32> &colors);
+VBO transform_to_2D(VBO object, Camera *camera, const Light &light, const Material &mat, std::vector<u32> &colors);
 
 // @IMPL: clipper.cpp
 /**
@@ -123,7 +116,7 @@ std::vector<glm::vec4> clipPolygon(std::vector<glm::vec4> &poly, glm::vec2 ll, g
 // @IMPL: triangleRasterizer.cpp
 /**
  * Draws the given VBO to the given canvas.
- * 
+ *
  * @param vbo: The vbo that will be drawn to the canvas.
  * @param can: The canvas that will be drawn to.
  * @param values: The color values for each triangle.
@@ -141,4 +134,4 @@ void draw_vbo(VBO vbo, Canvas *can, std::vector<u32> values);
  */
 void fillPolygon(std::vector<glm::vec2> poly, Canvas *can, u32 value);
 #endif
-#endif
+} // namespace ra

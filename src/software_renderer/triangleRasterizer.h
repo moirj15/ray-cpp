@@ -1,9 +1,9 @@
-#ifndef TRIANGLE_RASTERIZER_H
-#define TRIANGLE_RASTERIZER_H
+#pragma once
 
-#include
-//#include "VBO.h"
+#include "VBO.h"
 
+namespace ra
+{
 void drawTriangles(const &VBO triangles);
+}
 
-#endif

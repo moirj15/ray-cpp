@@ -1,10 +1,14 @@
 #include "pipeline.h"
 
+
 // TODO: move into pipeline.cpp
 
 #define GLM_ENABLE_EXPERIMENTAL
 #include <glm/gtx/normal.hpp>
 #include <glm/gtx/string_cast.hpp>
+
+namespace ra
+{
 
 /**
  * Lights the given triangle using the given light and material.
@@ -63,4 +67,5 @@ u32 phong_light(std::vector<glm::vec4> triangle, const Light &light,
     return (u32) ((0xFF << 24) | (red << 16) | (green << 8) | blue);
     
 
+}
 }

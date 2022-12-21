@@ -4,6 +4,9 @@
 
 #include "canvas.h"
 
+namespace ra
+{
+
 /**
  * Constructor. 
  *
@@ -100,4 +103,6 @@ void Canvas::fill_row(u32 start_x, u32 end_x, f32 start_z, f32 end_z, u32 y, u32
         row++;
         zs++;
     }
+}
+
 }

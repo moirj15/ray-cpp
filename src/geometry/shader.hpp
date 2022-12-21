@@ -20,6 +20,8 @@ class Shader
 public:
     virtual ~Shader() = default;
 
+    // TODO: this should take in a 'SurfaceData' that gives the usual surface parameters (pos, uv coord, normal, etc.)
+    // TODO: Read up on the shader model for OSL and RSL
     [[nodiscard]] virtual glm::vec3 Execute(const IntersectData &id) const = 0;
 };
 

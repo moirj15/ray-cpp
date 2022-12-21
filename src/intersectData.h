@@ -6,6 +6,12 @@
 #include "math/ray.hpp"
 class Object;
 
+struct SurfaceData {
+    glm::vec3 pos;
+    glm::vec2 uv;
+    glm::vec3 normal;
+};
+
 struct IntersectData {
     glm::vec3 intersection{0, 0, 0};
     glm::vec3 normal{0, 0, 0};

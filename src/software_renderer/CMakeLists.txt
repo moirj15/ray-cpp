@@ -10,26 +10,27 @@ add_library(softwareRendererLib STATIC
         lighting.cpp
         triangulation.cpp
         triangleRasterizer.cpp
-)
+        ../Camera.cpp
+ "SoftwareRenderer.cpp")
 
 target_include_directories(softwareRendererLib PRIVATE
         ${CMAKE_SOURCE_DIR}/libs/glm/
 )
 
-add_executable(softwareRenderer
+add_executable(software_renderer
 		main.cpp
         window.h
         window.cpp
-)
+ "SoftwareRenderer.cpp")
 
-target_include_directories(softwareRenderer PRIVATE
+target_include_directories(software_renderer PRIVATE
         ${CMAKE_SOURCE_DIR}/libs/SDL2/include
         ${CMAKE_SOURCE_DIR}/libs/glm/
         geometryLib
         importerLib
 )
 
-target_link_libraries(softwareRenderer PRIVATE
+target_link_libraries(software_renderer PRIVATE
         softwareRendererLib
         importerLib
         geometryLib

@@ -9,6 +9,8 @@
 
 //TODO: Delete this file
 
+namespace ra
+{
 
 #define printBucket(B)      printf("yMax %d x %d dx %d dy %d sum %d index %d\n", \
                                     B.yMax, B.x, B.dx, B.dy, B.sum, B.index)
@@ -254,3 +256,4 @@ void adjust(std::vector<Bucket> &al) {
     }
 }
 
+}

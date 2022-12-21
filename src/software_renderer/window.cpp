@@ -1,6 +1,10 @@
+#include "window.h"
+
 #include <cstdio>
 #include <cstdlib>
-#include "window.h"
+
+namespace ra
+{
 
 /**
  * @param w: The width of the window.
@@ -8,8 +12,9 @@
  * @param title: The title of the window.
  * @param c: The canvas that will be displayed on the window.
  */
-Window::Window(int32_t w, uint32_t h, const char *title, Canvas *c) {
-    width = w;
+Window::Window(int32_t w, uint32_t h, const char *title, Canvas *c)
+{
+    width  = w;
     height = h;
     canvas = c;
 
@@ -19,9 +24,7 @@ Window::Window(int32_t w, uint32_t h, const char *title, Canvas *c) {
     }
 
     SDL_window = NULL;
-    SDL_window = SDL_CreateWindow(title, SDL_WINDOWPOS_UNDEFINED,
-                                SDL_WINDOWPOS_UNDEFINED, w, h,
-                                SDL_WINDOW_SHOWN);
+    SDL_window = SDL_CreateWindow(title, SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, w, h, SDL_WINDOW_SHOWN);
 
     if (!SDL_window) {
         fprintf(stderr, "ERR: %s\n", SDL_GetError());
@@ -35,9 +38,7 @@ Window::Window(int32_t w, uint32_t h, const char *title, Canvas *c) {
         exit(EXIT_FAILURE);
     }
 
-    SDL_texture = SDL_CreateTexture(SDL_renderer,
-                                    SDL_PIXELFORMAT_ARGB8888,
-                                    SDL_TEXTUREACCESS_STATIC, w, h);
+    SDL_texture = SDL_CreateTexture(SDL_renderer, SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_STATIC, w, h);
 
     if (!SDL_texture) {
         fprintf(stderr, "ERR: %s\n", SDL_GetError());
@@ -48,11 +49,12 @@ Window::Window(int32_t w, uint32_t h, const char *title, Canvas *c) {
 /**
  * Destructor.
  */
-Window::~Window(void) {
+Window::~Window(void)
+{
     SDL_DestroyRenderer(SDL_renderer);
     SDL_DestroyTexture(SDL_texture);
     SDL_DestroyWindow(SDL_window);
-    delete(canvas);
+    delete (canvas);
 }
 
 /**
@@ -60,14 +62,17 @@ Window::~Window(void) {
  *
  * @param win: The window that will be updated.
  */
-void Window::updateWindow(void) {
-    
+void Window::updateWindow(void)
+{
+
+#if 0
     SDL_UpdateTexture(SDL_texture, NULL, canvas->pixels,
                         canvas->width * sizeof(uint32_t));
+#endif
 
-//    canvas->clearCanvas();
+    //    canvas->clearCanvas();
     SDL_RenderClear(SDL_renderer);
     SDL_RenderCopy(SDL_renderer, SDL_texture, NULL, NULL);
     SDL_RenderPresent(SDL_renderer);
 }
-
+} // namespace ra

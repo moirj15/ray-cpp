@@ -33,40 +33,40 @@ int main(int argc, char **argv)
     Importer importer{"test-obj/block.obj"};
     Scene scene = importer.Import();
 
-    const Light light(
-        glm::vec4(0.0f, 10.00f, 10.0f, 1.0f), glm::vec4(1.0f, 1.0f, 1.0f, 1.0f), glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
-    scene.AddLight(light);
-
-    Phong sphere_illum1(scene, 0.5f, 0.5f, 0.5f, 70.0f, 1.0f, 0.8f, ambient_mat, diffuse_mat, specular_mat);
-    Phong sphere_illum2(scene, 0.1f, 0.5f, 0.5f, 70.0f, 0.5f, 1.0f, ambient_mat, diffuse_mat, specular_mat);
-
-    glm::vec4 color1(1.0, 0.0, 0.0, 0.0);
-    glm::vec4 color2(1.0, 1.0, 0.0, 0.0);
-
-    CheckerBoard floor_illum(scene, 0.5, 0.5, 0.5, 70.0, 0.0, 0.0, color1, color2);
-
-    std::vector<glm::vec3> triangles;
-
-    triangles.emplace_back(-1.0, 0.0, -1.0); // fl
-    triangles.emplace_back(-1.0, 0.0, 1.0);  // bl
-    triangles.emplace_back(1.0, 0.0, 1.0);   // br
-    triangles.emplace_back(1.0, 0.0, -1.0);  // tr
-
-    std::vector<u32> indices = {
-        0,
-        1,
-        2,
-        0,
-        2,
-        3,
-    };
-
-    for (auto &p : triangles) {
-        auto t = glm::translate(glm::mat4(1.0), {0.0, -1.9, 0.0});
-        p = glm::scale(t, {10, 5, 10}) * glm::vec4(p, 1.0);
-    }
-
-    auto plane_transform = glm::scale(glm::translate(glm::mat4(1.0), {0.0, -1.9, 0.0}), {10, 5, 10});
+//    const Light light(
+//        glm::vec4(0.0f, 10.00f, 10.0f, 1.0f), glm::vec4(1.0f, 1.0f, 1.0f, 1.0f), glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
+//    scene.AddLight(light);
+//
+//    Phong sphere_illum1(scene, 0.5f, 0.5f, 0.5f, 70.0f, 1.0f, 0.8f, ambient_mat, diffuse_mat, specular_mat);
+//    Phong sphere_illum2(scene, 0.1f, 0.5f, 0.5f, 70.0f, 0.5f, 1.0f, ambient_mat, diffuse_mat, specular_mat);
+//
+//    glm::vec4 color1(1.0, 0.0, 0.0, 0.0);
+//    glm::vec4 color2(1.0, 1.0, 0.0, 0.0);
+//
+//    CheckerBoard floor_illum(scene, 0.5, 0.5, 0.5, 70.0, 0.0, 0.0, color1, color2);
+//
+//    std::vector<glm::vec3> triangles;
+//
+//    triangles.emplace_back(-1.0, 0.0, -1.0); // fl
+//    triangles.emplace_back(-1.0, 0.0, 1.0);  // bl
+//    triangles.emplace_back(1.0, 0.0, 1.0);   // br
+//    triangles.emplace_back(1.0, 0.0, -1.0);  // tr
+//
+//    std::vector<u32> indices = {
+//        0,
+//        1,
+//        2,
+//        0,
+//        2,
+//        3,
+//    };
+//
+//    for (auto &p : triangles) {
+//        auto t = glm::translate(glm::mat4(1.0), {0.0, -1.9, 0.0});
+//        p = glm::scale(t, {10, 5, 10}) * glm::vec4(p, 1.0);
+//    }
+//
+//    auto plane_transform = glm::scale(glm::translate(glm::mat4(1.0), {0.0, -1.9, 0.0}), {10, 5, 10});
 
     FixedColor floor_color(glm::vec3(1.0, 0.0, 0.0));
     //    scene.AddObject(new Mesh(triangles, indices, &sphere_illum1), plane_transform);

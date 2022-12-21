@@ -24,9 +24,6 @@ class Tracer
 
 public:
     Tracer(const Scene &scene, const Camera &camera, Frame &frame) : m_scene(scene), m_camera(camera), m_frame(frame) {}
-    /**
-     * @brief test
-     * @param foo
-     */
     void RenderFrame();
+
 };

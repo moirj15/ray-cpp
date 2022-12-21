@@ -2,6 +2,7 @@
 #define TINYOBJLOADER_IMPLEMENTATION
 #include "../file_io.hpp"
 #include "tiny_obj_loader.h"
+#include "../geometry/shader.hpp"
 
 #include <cassert>
 #include <cstdio>
@@ -33,7 +34,7 @@ Scene Importer::Import()
 
     Scene scene;
 
-    auto *mesh = new Mesh(std::move(vertices), std::move(indices), nullptr);
+    auto *mesh = new Mesh(std::move(vertices), std::move(indices), new FixedColor({1.0, 1.0, 0.0}));
     scene.AddObject(mesh);
 
     return scene;

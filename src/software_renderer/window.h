@@ -5,6 +5,9 @@
 
 #include "canvas.h"
 
+namespace ra
+{
+
 struct Window {
     SDL_Window      *SDL_window;
     SDL_Texture     *SDL_texture;
@@ -33,3 +36,4 @@ struct Window {
 	*/
 	void updateWindow(void);
 };
+}

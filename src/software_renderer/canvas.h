@@ -1,8 +1,9 @@
-#ifndef CANVAS_H
-#define CANVAS_H
+#pragma once
 
 #include "utils.h"
 
+namespace ra
+{
 /**
  * Canvas for drawing to.
  */
@@ -56,5 +57,4 @@ struct Canvas {
 };
 
 
-
-#endif
+}

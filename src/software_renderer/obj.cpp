@@ -1,14 +1,3 @@
-
-/**
- * FILE: obj.cpp
- * Author: James Moir (jgm6103)
- *
- * Contains a function which will read an obj file and place it's contents into
- * a canvas for later use.
- *
- * All obj files were obtained by exporting a model created in blender.
- */
-
 #include <cstdio>
 #include <cstdlib>
 #include <vector>
@@ -20,6 +9,8 @@
 //#include "obj.h"
 
 using namespace std;
+namespace ra
+{
 
 /**
  * Reads the obj file at the given address and adds the contents to the given
@@ -71,4 +62,6 @@ VBO readOBJ(const char *objSrc) {
 	fclose(fp);
 
 	return VBO(tmpVertList, connections);
+}
+
 }

@@ -1,5 +1,8 @@
 #include "pipeline.h"
 
+namespace ra
+{
+
 /**
  * Converts the given polygon into a VBO filled with triangles.
  *
@@ -43,4 +46,6 @@ VBO triangulate(std::vector<glm::vec4> polygon)
     }
 #endif
     return ret;
+}
+
 }
