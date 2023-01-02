@@ -34,8 +34,9 @@ Scene Importer::Import()
 
     Scene scene;
 
-    auto *mesh = new Mesh(std::move(vertices), std::move(indices), new FixedColor({1.0, 1.0, 0.0}));
-    scene.AddObject(mesh);
+    auto *mesh = new Mesh(std::move(vertices), std::move(indices));
+    assert(0); // TODO: need to switch to a file format that includes object positions
+    //scene.AddObject(mesh);
 
     return scene;
 }

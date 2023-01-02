@@ -5,9 +5,9 @@
 #include <cstdio>
 #include <cstdlib>
 #include <glm/glm.hpp>
-//#include <glm/mat4x4.hpp>
-//#include <glm/vec3.hpp>
-//#include <glm/vec4.hpp>
+// #include <glm/mat4x4.hpp>
+// #include <glm/vec3.hpp>
+// #include <glm/vec4.hpp>
 
 // Some usefule typedefs
 typedef uint64_t u64;
@@ -51,53 +51,30 @@ void closeFile(FILE *fp);
 template<typename Tag>
 class Handle
 {
-    uint64_t _value = 0;
+    u32 m_value = std::numeric_limits<u32>::max();
 
 public:
-    static Handle Invalid()
-    {
-        return Handle();
-    }
+    static Handle CreateInvalid() { return Handle(); }
 
     Handle() = default;
-    explicit Handle(const uint64_t value) : _value(value)
-    {
-    }
+    explicit Handle(const uint64_t value) : m_value(value) {}
 
-    explicit operator uint64_t() const
-    {
-        return _value;
-    }
+    friend bool operator==(Handle a, Handle b) { return a.m_value == b.m_value; }
 
-    friend bool operator==(Handle a, Handle b)
-    {
-        return a._value == b._value;
-    }
+    friend bool operator!=(Handle a, Handle b) { return a.m_value != b.m_value; }
 
-    friend bool operator!=(Handle a, Handle b)
-    {
-        return a._value != b._value;
-    }
+    bool operator==(const uint64_t b) const { return m_value == b; }
 
-    bool operator==(const uint64_t b) const
-    {
-        return _value == b;
-    }
+    bool operator!=(const uint64_t b) const { return m_value != b; }
 
-    bool operator!=(const uint64_t b) const
-    {
-        return _value != b;
-    }
+    uint64_t operator++(int) { return m_value++; }
 
-    uint64_t operator++(int)
-    {
-        return _value++;
-    }
+    size_t Hash() const { return std::hash<uint64_t>()(m_value); }
 
-    size_t Hash() const
-    {
-        return std::hash<uint64_t>()(_value);
-    }
+    bool IsValid() const { return m_value != CreateInvalid(); }
+    bool IsInvalid() const { return m_value == CreateInvalid(); }
+
+    u32 GetValue() const { return m_value; }
 };
 
 namespace std
@@ -105,15 +82,12 @@ namespace std
 
 template<typename Tag>
 struct hash<Handle<Tag>> {
-    size_t operator()(const Handle<Tag> &k) const
-    {
-        return k.Hash();
-    }
+    size_t operator()(const Handle<Tag> &k) const { return k.Hash(); }
 };
 } // namespace std
 #define MAKE_HANDLE(name)                                                                                                                                      \
-    struct name##Tag {                                                                                                                                         \
+    struct __##name##Tag {                                                                                                                                     \
     };                                                                                                                                                         \
-    using name = Handle<name##Tag>
+    using name = Handle<__##name##Tag>
 
 #endif

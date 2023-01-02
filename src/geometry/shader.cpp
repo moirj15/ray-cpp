@@ -2,13 +2,14 @@
 
 #include "scene.hpp"
 
-glm::vec3 Phong::Execute(const IntersectData &id) const
+glm::vec3 Phong::Execute(const SurfaceData &id) const
 {
+    #if 0
     glm::vec3 ret_col(0, 0, 0);
     for (const auto &light : m_scene.GetLights()) {
-        const auto surfToLight = glm::normalize(light.position - id.intersection);
-        const auto viewVec = glm::normalize(-id.ray.direction);
-        const auto reflectionVec = glm::normalize(glm::reflect(-surfToLight, id.normal));
+        const glm::vec3 surfToLight = glm::normalize(light.position - id.pos);
+        const glm::vec3 viewVec = glm::normalize(-id.ray.direction);
+        const glm::vec3 reflectionVec = glm::normalize(glm::reflect(-surfToLight, id.normal));
 
         glm::vec3 ambient, diffuse, specular;
 
@@ -22,10 +23,13 @@ glm::vec3 Phong::Execute(const IntersectData &id) const
             ret_col = ambient + diffuse + specular;
         }
     }
+    
     return ret_col;
+    #endif
+    return {};
 }
 
-glm::vec3 CheckerBoard::Execute(const IntersectData &id) const
+glm::vec3 CheckerBoard::Execute(const SurfaceData &surface_data) const
 {
 #if 0
     const auto surfToLight = glm::normalize(light.position - id.intersection);
@@ -50,10 +54,10 @@ glm::vec3 CheckerBoard::Execute(const IntersectData &id) const
     return {0, 0, 0};
 }
 
-glm::vec4 CheckerBoard::get_cube(const IntersectData &id) const
+glm::vec4 CheckerBoard::get_cube(const SurfaceData &surface_data) const
 {
-    f32 u_barry = id.u_coord;
-    f32 v_barry = id.v_coord;
+    f32 u_barry = surface_data.uv.x;
+    f32 v_barry = surface_data.uv.y;
     f32 w_barry = 1 - u_barry - v_barry;
     glm::vec4 A(10.0, 1.0, 0.0, 0.0); // = id.triangle_points[0];
     glm::vec4 B(0.0, 1.0, 0.0, 0.0);  //= id.triangle_points[1];

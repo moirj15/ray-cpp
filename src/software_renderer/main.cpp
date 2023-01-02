@@ -12,12 +12,11 @@
 // #include <glm/ext.hpp>
 #include "../Camera.h"
 #include "../geometry/scene.hpp"
-#include "SoftwareRenderer.hpp"
 #include "../importer/scene_importer.hpp"
+#include "SoftwareRenderer.hpp"
 #include "pipeline.h"
 
 #include <glm/gtx/transform.hpp>
-
 
 int main(int argc, char **argv)
 {
@@ -26,7 +25,8 @@ int main(int argc, char **argv)
     constexpr u32 WIDTH  = 1920;
     constexpr u32 HEIGHT = 1080;
 
-    ra::SoftwareRenderer renderer{WIDTH, HEIGHT};
+    Camera               camera{glm::vec3(0.0, 0.0, 5.0), glm::vec3(0.0, 0.0, -1.0), glm::vec3(0.0, 1.0, 0.0)};
+    ra::SoftwareRenderer renderer(WIDTH, HEIGHT, camera);
 
     assert(SDL_Init(SDL_INIT_VIDEO) == 0);
     SDL_Window *window = SDL_CreateWindow("Software Rasterizer", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, WIDTH, HEIGHT, SDL_WINDOW_SHOWN);
@@ -44,7 +44,6 @@ int main(int argc, char **argv)
 
     assert(sdl_texture != nullptr);
 
-    Camera   camera{glm::vec3(0.0, 0.0, 5.0), glm::vec3(0.0, 0.0, -1.0), glm::vec3(0.0, 1.0, 0.0)};
     Importer importer{"test-obj/block.obj"};
     Scene    scene = importer.Import();
 

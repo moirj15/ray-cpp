@@ -4,6 +4,7 @@ add_library(geometryLib
         object.cpp
         scene.cpp
         shader.cpp
+        oct_tree.cpp
 )
 
 target_include_directories(geometryLib

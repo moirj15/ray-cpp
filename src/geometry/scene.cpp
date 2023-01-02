@@ -3,28 +3,30 @@
 #include "../intersectData.h"
 #include "../math/ray.hpp"
 
-Object *Scene::CastRay(const Ray &ray, IntersectData &data, s32 check_obj) const
+ObjectHandle Scene::CastRay(const Ray &ray, SurfaceData &data, ObjectHandle last_hit) const
 {
-    IntersectData closest_data;
-    f32 closest_distance = INFINITY;
-    f32 test_distance;
-    s32 obj = -1;
-    Object *hit = nullptr;
-    for (const auto &object : m_objects) {
+    SurfaceData  closest_data;
+    f32          closest_distance = INFINITY;
+    f32          test_distance;
+    s32          obj = -1;
+    ObjectHandle hit;
+    for (u32 object_index = 0; object_index < m_objects.size(); object_index++) {
 
-        IntersectData curr_data;
+        SurfaceData curr_data;
+        const Object &object = m_objects[object_index];
 
-        if (object.get() != data.hit_obj && object->Intersect(ray, curr_data)) {
-            test_distance = glm::distance(ray.origin, curr_data.intersection);
+
+        if (object_index != last_hit && GetGeometry(object.geometry_handle)->Intersect(ray)) {
+            test_distance = glm::distance(ray.origin, curr_data.pos);
             //            if ((check_obj > -1) && (i == (u64)check_obj)) {
             //                continue;
             //            }
             if (test_distance <= closest_distance) {
-                hit = object.get();
+                hit              = ObjectHandle{object_index};
                 closest_distance = test_distance;
                 //                obj = (s32)i;
-                curr_data.hit_obj = object.get();
-                closest_data = curr_data;
+//                curr_data.hit_obj = object.get();
+                closest_data      = curr_data;
             }
         }
     }
@@ -32,16 +34,17 @@ Object *Scene::CastRay(const Ray &ray, IntersectData &data, s32 check_obj) const
     return hit;
 }
 
-bool Scene::InShadow(const IntersectData &intersect_data) const
+bool Scene::InShadow(const SurfaceData &intersect_data, ObjectHandle last_hit) const
 {
     for (const auto &light : m_lights) {
-//        const auto surfToLight = glm::normalize(light.position - intersect_data.intersection);
-//        const auto viewVec = glm::normalize(-intersect_data.ray.direction);
-//        const auto reflectionVec = glm::normalize(glm::reflect(-surfToLight, intersect_data.normal));
-        const Ray ray(intersect_data.intersection, glm::normalize(light.position - intersect_data.intersection));
-        IntersectData throw_away;
-        for (const auto &object : m_objects) {
-            if (object.get() != intersect_data.hit_obj && object->Intersect(ray, throw_away)) {
+        //        const auto surfToLight = glm::normalize(light.position - intersect_data.intersection);
+        //        const auto viewVec = glm::normalize(-intersect_data.ray.direction);
+        //        const auto reflectionVec = glm::normalize(glm::reflect(-surfToLight, intersect_data.normal));
+        const Ray     ray(intersect_data.pos, glm::normalize(light.position - intersect_data.pos));
+        SurfaceData throw_away;
+        for (u32 object_index = 0; object_index < m_objects.size(); object_index++) {
+            const Object &object = m_objects[object_index];
+            if (object_index != last_hit && GetGeometry(object.geometry_handle)->Intersect(ray)) {
                 return true;
             }
         }
@@ -51,8 +54,8 @@ bool Scene::InShadow(const IntersectData &intersect_data) const
 
 void Scene::Transform(const glm::mat4 &mat)
 {
-    for (s32 i = 0; i < m_objects.size(); i++) {
-        m_objects[i]->Transform(mat * m_object_transforms[i]);
+    for (s32 i = 0; i < m_geometries.size(); i++) {
+        //m_geometries[i]->Transform(mat * m_transforms[i]);
     }
     for (auto &light : m_lights) {
         light.position = mat * glm::vec4(light.position, 1.0);

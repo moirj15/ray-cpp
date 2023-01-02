@@ -1,6 +1,6 @@
 #pragma once
 
-//TODO: Figure out what to do with this structure
+// TODO: Figure out what to do with this structure
 #include "../intersectData.h"
 
 #include <glm/glm.hpp>
@@ -22,7 +22,7 @@ public:
 
     // TODO: this should take in a 'SurfaceData' that gives the usual surface parameters (pos, uv coord, normal, etc.)
     // TODO: Read up on the shader model for OSL and RSL
-    [[nodiscard]] virtual glm::vec3 Execute(const IntersectData &id) const = 0;
+    virtual glm::vec3 Execute(const SurfaceData &surface_data) const = 0;
 };
 
 class FixedShader : public Shader
@@ -40,11 +40,14 @@ public:
     f32 m_reflection_const;
     f32 m_refraction_const;
 
-    FixedShader(const Scene &scene, f32 ambient_coef, f32 specular_coef, f32 diffuse_coef, f32 specular_exp,
-        f32 reflection_const, f32 refraction_const) :
-            m_scene(scene),
-            m_ambient_coef(ambient_coef), m_specular_coef(specular_coef), m_diffuse_coef(diffuse_coef),
-            m_specular_exp(specular_exp), m_reflection_const(reflection_const), m_refraction_const(refraction_const)
+    FixedShader(const Scene &scene, f32 ambient_coef, f32 specular_coef, f32 diffuse_coef, f32 specular_exp, f32 reflection_const, f32 refraction_const) :
+        m_scene(scene),
+        m_ambient_coef(ambient_coef),
+        m_specular_coef(specular_coef),
+        m_diffuse_coef(diffuse_coef),
+        m_specular_exp(specular_exp),
+        m_reflection_const(reflection_const),
+        m_refraction_const(refraction_const)
     {
     }
     ~FixedShader() override = default;
@@ -58,7 +61,7 @@ class FixedColor : public Shader
 
 public:
     explicit FixedColor(const glm::vec3 color) : m_color(color) {}
-    [[nodiscard]] glm::vec3 Execute(const IntersectData &id) const override { return m_color; }
+    glm::vec3 Execute(const SurfaceData &) const override { return m_color; }
 };
 
 class Phong : public FixedShader
@@ -68,14 +71,15 @@ class Phong : public FixedShader
     glm::vec3 m_specular_mat;
 
 public:
-    Phong(const Scene &scene, f32 a_coef, f32 s_coef, f32 d_coef, f32 s_exp, f32 r_const, f32 t_const, glm::vec4 aM,
-        glm::vec4 dM, glm::vec4 sM) :
-            FixedShader(scene, a_coef, s_coef, d_coef, s_exp, r_const, t_const),
-            m_ambient_mat(aM), m_diffuse_mat(dM), m_specular_mat(sM)
+    Phong(const Scene &scene, f32 a_coef, f32 s_coef, f32 d_coef, f32 s_exp, f32 r_const, f32 t_const, glm::vec4 aM, glm::vec4 dM, glm::vec4 sM) :
+        FixedShader(scene, a_coef, s_coef, d_coef, s_exp, r_const, t_const),
+        m_ambient_mat(aM),
+        m_diffuse_mat(dM),
+        m_specular_mat(sM)
     {
     }
 
-    [[nodiscard]] glm::vec3 Execute(const IntersectData &id) const override;
+    glm::vec3 Execute(const SurfaceData &surface_data) const override;
 };
 
 class CheckerBoard : public FixedShader
@@ -84,15 +88,15 @@ class CheckerBoard : public FixedShader
     glm::vec4 m_color2;
 
 public:
-    CheckerBoard(const Scene &scene, f32 a_coef, f32 s_coef, f32 d_coef, f32 s_exp, f32 r_const, f32 t_const,
-        const glm::vec4 &c1, const glm::vec4 &c2) :
-            FixedShader(scene, a_coef, s_coef, d_coef, s_exp, r_const, t_const),
-            m_color1(c1), m_color2(c2)
+    CheckerBoard(const Scene &scene, f32 a_coef, f32 s_coef, f32 d_coef, f32 s_exp, f32 r_const, f32 t_const, const glm::vec4 &c1, const glm::vec4 &c2) :
+        FixedShader(scene, a_coef, s_coef, d_coef, s_exp, r_const, t_const),
+        m_color1(c1),
+        m_color2(c2)
     {
     }
 
-    [[nodiscard]] glm::vec3 Execute(const IntersectData &id) const override;
+    [[nodiscard]] glm::vec3 Execute(const SurfaceData &surface_data) const override;
 
 private:
-    glm::vec4 get_cube(const IntersectData &id) const;
+    glm::vec4 get_cube(const SurfaceData &surface_data) const;
 };

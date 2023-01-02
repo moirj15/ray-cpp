@@ -14,7 +14,7 @@
  * normal if there is an Intersection.
  * @return: True if the object was intersected, false otherwise.
  */
-bool Sphere::Intersect(const Ray &r, IntersectData &id) const
+std::optional<SurfaceData> Sphere::Intersect(const Ray &r) const
 {
     const glm::vec3 &d = r.direction;
     const glm::vec3 &o = r.origin;
@@ -26,7 +26,7 @@ bool Sphere::Intersect(const Ray &r, IntersectData &id) const
     // Calculate the value under the square root in the quadratic formula
     f32 squareRootCheck = pow(B, 2.0f) - (4.0f * C);
     if (squareRootCheck < 0.0) {
-        return false;
+        return {};
     }
     // Calculate the quadratic formula
     f32 wAdd = (-B + sqrt(squareRootCheck)) / 2.0f;
@@ -36,7 +36,7 @@ bool Sphere::Intersect(const Ray &r, IntersectData &id) const
     f32 leastPos;
 
     if ((wAdd < 0.0) && (wSub < 0.0)) {
-        return false;
+        return {};
     } else if (wSub < 0.0) {
         leastPos = wAdd;
     } else if (wAdd < 0.0) {
@@ -46,10 +46,12 @@ bool Sphere::Intersect(const Ray &r, IntersectData &id) const
     }
 
     // Calculate intersection and normal
-    id.intersection = (o + (d * leastPos));
-    id.normal = glm::normalize(id.intersection - m_center);
-    id.ray = r;
-    return true;
+    const glm::vec3 position = o + (d * leastPos);
+    return SurfaceData{
+        .pos = position,
+        .uv = {0, 0},
+        .normal = glm::normalize(position - m_center),
+    };
 }
 
 void Sphere::Transform(const glm::mat4 &transform)
@@ -69,7 +71,7 @@ void Sphere::Transform(const glm::mat4 &transform)
  * normal if there is an Intersection.
  * @return: True if the object was intersected, false otherwise.
  */
-bool Mesh::Intersect(const Ray &r, IntersectData &id) const
+std::optional<SurfaceData> Mesh::Intersect(const Ray &r) const
 {
     for (u64 i = 0; i < m_vertices.size(); i += 3) {
 // The _vertices of the triangle
@@ -82,15 +84,15 @@ bool Mesh::Intersect(const Ray &r, IntersectData &id) const
         const u32 i1 = m_indices[i + 1];
         const u32 i2 = m_indices[i + 2];
 
-        const auto p0 = m_vertices[i0];
-        const auto p1 = m_vertices[i1];
-        const auto p2 = m_vertices[i2];
+        const glm::vec3 p0 = m_vertices[i0];
+        const glm::vec3 p1 = m_vertices[i1];
+        const glm::vec3 p2 = m_vertices[i2];
 
-        glm::vec3 e1 = p1 - p0;
-        glm::vec3 e2 = p2 - p0;
-        glm::vec3 T = glm::vec3(r.origin) - p0;
-        glm::vec3 P = glm::cross(glm::vec3(r.direction), e2);
-        glm::vec3 Q = glm::cross(T, e1);
+        const glm::vec3 e1 = p1 - p0;
+        const glm::vec3 e2 = p2 - p0;
+        const glm::vec3 T = glm::vec3(r.origin) - p0;
+        const glm::vec3 P = glm::cross(glm::vec3(r.direction), e2);
+        const glm::vec3 Q = glm::cross(T, e1);
 
         if (!glm::dot(P, e1)) {
             continue;
@@ -106,23 +108,27 @@ bool Mesh::Intersect(const Ray &r, IntersectData &id) const
             continue;
         }
 
-        id.u_coord = u;
-        id.v_coord = v;
+//        id.u_coord = u;
+//        id.v_coord = v;
+//
+//        id.intersection =
+//        id.normal =
+//        id.triangle_points[0] = glm::vec4(p0, 1.0);
+//        id.triangle_points[1] = glm::vec4(p1, 1.0);
+//        id.triangle_points[2] = glm::vec4(p2, 1.0);
+//        if (id.normal.y < 0.0)
+//            id.normal = -id.normal;
+//        id.normal = glm::normalize(id.normal);
+//        id.ray = r;
 
-        id.intersection = r.origin + t * r.direction;
-        id.normal = glm::vec4(glm::cross(e1, e2), 0.0);
-        id.triangle_points[0] = glm::vec4(p0, 1.0);
-        id.triangle_points[1] = glm::vec4(p1, 1.0);
-        id.triangle_points[2] = glm::vec4(p2, 1.0);
-        if (id.normal.y < 0.0)
-            id.normal = -id.normal;
-        id.normal = glm::normalize(id.normal);
-        id.ray = r;
-
-        return true;
+        return SurfaceData{
+            .pos = r.origin + t * r.direction,
+            .uv = {u, v},
+            .normal = glm::normalize(glm::cross(e1, e2)),
+        };
     }
 
-    return false;
+    return {};
 }
 
 void Mesh::Transform(const glm::mat4 &transform)

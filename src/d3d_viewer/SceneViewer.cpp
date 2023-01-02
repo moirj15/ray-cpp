@@ -120,8 +120,8 @@ SceneViewer::SceneViewer(const Window &window, const Scene &scene, Camera &camer
 
     m_ctx.m_context->RSSetViewports(1, &m_viewport);
 
-    for (const auto &object : m_scene.GetObjects()) {
-        if (object->type == Object::Type::Mesh) {
+    for (const auto &object : m_scene.GetGeometries()) {
+        if (object->type == Geometry::Type::Mesh) {
             auto *mesh = reinterpret_cast<::Mesh *>(object.get());
             m_resource_manager.AddMesh(mesh->GetVertices(), mesh->GetIndices());
         }

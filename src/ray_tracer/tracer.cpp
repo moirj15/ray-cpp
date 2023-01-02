@@ -35,26 +35,28 @@ void Tracer::RenderFrame()
         std::vector<Ray> next_bounce;
         bool no_hits = true;
         // TODO: Find a better method to prevent self intersections
-        Object *last_hit = nullptr;
+        ObjectHandle last_hit;
         for (u32 d = 0; d < depth; d++) {
             for (const auto &ray : bounce_rays) {
-                IntersectData intersect_data;
-                intersect_data.hit_obj = last_hit;
-                auto *object = m_scene.CastRay(ray, intersect_data, -1);
-                last_hit = object;
+                SurfaceData intersect_data;
+//                intersect_data.hit_obj = last_hit;
+                ObjectHandle object_handle = m_scene.CastRay(ray, intersect_data, ObjectHandle::CreateInvalid());
+                last_hit = object_handle;
 
-                if (!object) {
+                if (object_handle.IsInvalid()) {
                     //                    _frame.SetPixel(i, glm::vec4(1.0f, 1.0f, 1.0f, 1.0f)/* * lmax*/);
                     continue;
                 }
                 no_hits = false;
 //                color += glm::abs(intersect_data.normal); //+= object->GetShader().Execute(intersect_data);
-                color += object->GetShader().Execute(intersect_data);
+                Scene::Object object = m_scene.GetObject(object_handle);
+
+                color += m_scene.GetShader(object.shader_handle)->Execute(intersect_data);
 
                 for (const auto &light : m_scene.GetLights()) {
-                    const auto surfToLight = glm::normalize(m_camera.eyepoint - intersect_data.intersection);
+                    const auto surfToLight = glm::normalize(m_camera.eyepoint - intersect_data.pos);
                     const auto reflectionVec = glm::normalize(-glm::reflect(surfToLight, intersect_data.normal));
-                    next_bounce.emplace_back(intersect_data.intersection, reflectionVec);
+                    next_bounce.emplace_back(intersect_data.pos, reflectionVec);
                 }
             }
             std::swap(bounce_rays, next_bounce);
