@@ -1,21 +1,20 @@
 #include "scene_importer.hpp"
 #define TINYOBJLOADER_IMPLEMENTATION
 #include "../file_io.hpp"
-#include "tiny_obj_loader.h"
 #include "../geometry/shader.hpp"
+#include "tiny_obj_loader.h"
 
 #include <cassert>
 #include <cstdio>
 #include <vector>
 
-Importer::Importer(const std::string &path) : m_filepath(path)
+namespace imp
 {
-}
 
-Scene Importer::Import()
+static Scene ImportObj(const std::string &filepath)
 {
     tinyobj::ObjReader reader;
-    assert(reader.ParseFromFile(m_filepath));
+    assert(reader.ParseFromFile(filepath));
 
     const tinyobj::attrib_t             &attrib = reader.GetAttrib();
     const std::vector<tinyobj::shape_t> &shapes = reader.GetShapes();
@@ -36,102 +35,83 @@ Scene Importer::Import()
 
     auto *mesh = new Mesh(std::move(vertices), std::move(indices));
     assert(0); // TODO: need to switch to a file format that includes object positions
-    //scene.AddObject(mesh);
+    // scene.AddObject(mesh);
 
     return scene;
 }
 
-#if 0
-// namespace parse_utils
-//{
-//
-// f32 ReadFloat(std::string_view file)
-//{
-//     std::string num;
-//     for (s32 i = 0; i < file.size() && !iswspace(file[i]); i++) {
-//     }
-// }
-//
-// u32 ReadInt(std::string_view file)
-//{
-//     std::string num;
-//     for (s32 i = 0; i < file.size() && !iswspace(file[i]); i++) {
-//     }
-// }
-//
-// }
-
-#define ASSERT(X, MESSAGE) assert((X) && MESSAGE)
-
-Importer::Importer(const std::string &path) : m_file(file_io::ReadFile(path))
+class PbrtImporter
 {
-}
+    struct Token {
+        enum class Type {
+            Identifier,
+            TypeName,
+            ParameterList,
+        } type;
+        const std::string_view value;
+    };
 
-Scene Importer::Import()
-{
-    using std::string_view;
-    Scene scene;
-    std::vector<glm::vec3> vertices;
-    std::vector<u32> vert_indices;
-    std::vector<u32> tex_indices;
-    while (m_index < m_file.size()) {
-        string_view token = ConsumeToken();
-        if (token == "#") {
-            SkipLine();
-            ASSERT(!iswspace(m_file[m_index]), "Should be on line after comment");
-        } else if (token == "v") {
-            f64 x = std::stod(std::string(ConsumeToken()));
-            f64 y = std::stod(std::string(ConsumeToken()));
-            f64 z = std::stod(std::string(ConsumeToken()));
-            ASSERT(!isdigit(m_file[m_index]), "Found an obj file that actually has the w component for vertex pos");
-            vertices.emplace_back(x, y, z);
-        } else if (token == "vt") {
-            f64 v = std::stod(std::string(ConsumeToken()));
-            f64 t = std::stod(std::string(ConsumeToken()));
-            ASSERT(!isdigit(m_file[m_index]), "Found an obj file that actually has the w component for tex coords");
-        } else if (token == "vn") {
-            // TODO: Unused in raytracer, implement for rasterizer
-            SkipLine();
-        } else if (token == "vp") {
-            SkipLine();
-        } else if (token == "f") {
-            string_view chunk = ConsumeToken();
-            if (size_t slash_index = chunk.find_last_of('/'); slash_index != string_view::npos) {
-                // TODO: Ignore the normal indices for now
-                vert_indices.emplace_back(std::stoi(std::string(chunk.substr(0, slash_index - 1))) - 1);
-                tex_indices.emplace_back(std::stoi(std::string(chunk.substr(slash_index + 1))) - 1);
+    std::string        m_file;
+    std::vector<Token> m_tokens;
+    size_t             m_index = 0;
+
+public:
+    explicit PbrtImporter(const std::string filepath)
+    {
+        std::ifstream     stream{filepath};
+        std::stringstream string_stream;
+        string_stream << stream.rdbuf();
+        m_file = string_stream.str();
+    }
+
+    Scene Import()
+    {
+        Tokenize();
+        return Parse();
+    }
+
+private:
+    void Tokenize()
+    {
+        const auto &GetChar = [this] { return m_file[m_index]; };
+        while (m_index < m_file.size()) {
+            if (GetChar() == '#') {
+                for (; m_index < m_file.size() && GetChar() != '\n'; ++m_index)
+                    ;
+                ++m_index;
             } else {
-                vert_indices.emplace_back(std::stoi(std::string(chunk)) - 1);
+                Token::Type type;
+                if (isupper(GetChar()) || islower(GetChar())) {
+                    type = Token::Type::Identifier;
+                } else if (isdigit(GetChar()) || GetChar() == '.') {
+                    type = Token::Type::ParameterList;
+                }
+                const size_t token_start = m_index;
+                for (; m_index < m_file.size() && !isspace(GetChar()); ++m_index)
+                    ;
+                const size_t token_end = m_index;
+                ++m_index;
+                m_tokens.emplace_back({})
             }
-        } else if (token == "l") {
-            // TODO: do lines some day
-            SkipLine();
-        } else {
-            // TODO: skipping material files and groups for now
-            SkipLine();
         }
     }
-    // TODO: I don't like coupling the shader to the object, need a better solution
-    scene.AddObject(new Mesh(vertices, vert_indices, new FixedColor({1.0, 1.0, 1.0})));
-    return scene;
+    Scene Parse() {}
+};
+
+static std::string_view GetFileExtension(const std::string_view filename)
+{
+    size_t dot_index = filename.find_last_of('.');
+    return filename.substr(dot_index + 1);
 }
 
-std::string_view Importer::ConsumeToken()
+Scene Import(const std::string &path)
 {
-    const u32 start = m_index;
-    u32 end = m_index;
-    for (; end < m_file.size() && !iswspace(m_file[end]); end++) {
+    if (GetFileExtension(path) == ".obj") {
+        return ImportObj(path);
+    } else {
+        assert(0);
+        return Scene{};
     }
-    m_index = end + 1;
-    if (iscntrl(m_file[m_index])) {
-        m_index++;
-    }
-    assert(!iswspace(m_file[m_index]));
-    return {m_file.begin() + start, m_file.begin() + end};
 }
 
-void Importer::SkipLine()
-{
-    m_index = m_file.find("\n", m_index) + 1;
-}
-#endif
+} // namespace imp
