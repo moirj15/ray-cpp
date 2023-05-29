@@ -3,6 +3,8 @@ add_library(
         rayTracerLib
         STATIC
         tracer.cpp
+        tracer.hpp
+        camera.hpp
 )
 
 target_include_directories(rayTracerLib
@@ -25,6 +27,7 @@ target_link_libraries(
 add_executable(cmdLineRayTracer
         main.cpp
         bmpIO.cpp
+        bmpIO.hpp
 )
 
 target_link_libraries(cmdLineRayTracer

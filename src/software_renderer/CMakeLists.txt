@@ -1,15 +1,23 @@
 add_library(softwareRendererLib STATIC	
         canvas.cpp
+        canvas.h
         polygon.cpp
+        polygon.h
         rasterizer.cpp
+        rasterizer.h
         utils.cpp
+        utils.h
         clipper.cpp
+        clipper.h
         vbo.cpp
+        vbo.h
         obj.cpp
+        obj.h
         transform.cpp
         lighting.cpp
         triangulation.cpp
         triangleRasterizer.cpp
+        triangleRasterizer.h
         ../Camera.cpp
  "SoftwareRenderer.cpp")
 

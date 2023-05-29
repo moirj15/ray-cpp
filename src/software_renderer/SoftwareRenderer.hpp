@@ -11,33 +11,12 @@ class Camera;
 namespace ra
 {
 
-class FrameBuffer
+struct FrameBuffer
 {
-    std::vector<u32> m_buffer;
-    u32              m_width;
-    u32              m_height;
-
-public:
-    explicit FrameBuffer(u32 width, u32 height) : m_buffer(width * height), m_width(width), m_height(height)
-    {
-    }
-
-    const u32 *GetBuffer() const
-    {
-        return m_buffer.data();
-    }
-    size_t GetBufferSize() const
-    {
-        return m_buffer.size();
-    }
-    u32 GetWidth() const
-    {
-        return m_width;
-    }
-    u32 GetHeight() const
-    {
-        return m_height;
-    }
+    const u32              width = 0;
+    const u32              height = 0;
+    const std::vector<u32> buffer;
+    static FrameBuffer Create(u32 width, u32 height);
 };
 
 class SoftwareRenderer
@@ -48,7 +27,7 @@ class SoftwareRenderer
 
 public:
     explicit SoftwareRenderer(u32 frame_buffer_width, u32 frame_buffer_height, Camera &camera);
-    void               SetupScene(Scene *scene);
+    void               SetupScene(const Scene &scene);
     void               Draw();
     const FrameBuffer &GetFrameBuffer() const
     {

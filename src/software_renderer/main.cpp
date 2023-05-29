@@ -26,8 +26,8 @@ int main(int argc, char **argv)
     constexpr u32 HEIGHT = 1080;
 
     Camera               camera{glm::vec3(0.0, 0.0, 5.0), glm::vec3(0.0, 0.0, -1.0), glm::vec3(0.0, 1.0, 0.0)};
-    ra::SoftwareRenderer renderer(WIDTH, HEIGHT, camera);
-
+//    ra::SoftwareRenderer renderer(WIDTH, HEIGHT, camera);
+//
     assert(SDL_Init(SDL_INIT_VIDEO) == 0);
     SDL_Window *window = SDL_CreateWindow("Software Rasterizer", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, WIDTH, HEIGHT, SDL_WINDOW_SHOWN);
 
@@ -43,13 +43,13 @@ int main(int argc, char **argv)
     SDL_Texture *sdl_texture = SDL_CreateTexture(sdl_renderer, SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_STATIC, WIDTH, HEIGHT);
 
     assert(sdl_texture != nullptr);
+//
+//    Importer importer{"test-obj/block.obj"};
+//    Scene    scene = importer.Import();
+//
+//    renderer.Draw();
 
-    Importer importer{"test-obj/block.obj"};
-    Scene    scene = importer.Import();
-
-    renderer.Draw();
-
-    SDL_UpdateTexture(sdl_texture, nullptr, renderer.GetFrameBuffer().GetBuffer(), renderer.GetFrameBuffer().GetWidth() * sizeof(uint32_t));
+//    SDL_UpdateTexture(sdl_texture, nullptr, renderer.GetFrameBuffer().GetBuffer(), renderer.GetFrameBuffer().GetWidth() * sizeof(uint32_t));
 
     //    canvas->clearCanvas();
     SDL_RenderClear(sdl_renderer);

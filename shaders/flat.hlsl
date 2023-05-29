@@ -8,7 +8,7 @@ cbuffer ModelConstatns : register(b1) {
 
 float4 VSMain(float3 position : POSITION) : SV_POSITION
 {
-    float4 transformed_pos = mul(mul(view_projection, transform), float4(position, 1.0));
+    float4 transformed_pos = mul(view_projection* transform, float4(position, 1.0));
     return transformed_pos;
 }
 

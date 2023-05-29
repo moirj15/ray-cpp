@@ -3,12 +3,14 @@
 #include "SceneViewer.hpp"
 
 #define GLM_ENABLE_EXPERIMENTAL
+#include "../geometry/scene.hpp"
+
 #include <glm/gtx/transform.hpp>
 
 namespace sv
 {
 
-void Buffer::Clear()
+void VertexBuffer::Clear()
 {
     buffer.Reset();
     size = 0;
@@ -28,29 +30,43 @@ ResourceManager::ResourceManager(RenderContext &ctx) : m_ctx(ctx), m_projection(
     m_static_constants        = AllocateBuffer(static_cast<const void *>(&constants), sizeof(Constants), D3D11_USAGE_DEFAULT, D3D11_BIND_CONSTANT_BUFFER);
 }
 
+void ResourceManager::PopulateFromScene(const Scene &scene)
+{
+    const auto &mesh_manager = scene.GetMeshManager();
+
+    const std::vector<glm::vec3> &verts = mesh_manager.GetVertices();
+    m_vert_buf.size                     = verts.size() * sizeof(glm::vec3);
+    m_vert_buf.buffer                   = AllocateBuffer(verts.data(), m_vert_buf.size, D3D11_USAGE_DEFAULT, D3D11_BIND_VERTEX_BUFFER);
+
+    const std::vector<u32> &indices = mesh_manager.GetIndices();
+    m_index_buf.byte_size           = indices.size() * sizeof(u32);
+    m_index_buf.buffer              = AllocateBuffer(indices.data(), m_index_buf.byte_size, D3D11_USAGE_DEFAULT, D3D11_BIND_INDEX_BUFFER);
+    // TODO: setup constant buffers
+}
+
 void ResourceManager::AddMesh(const std::vector<glm::vec3> &vertices, const std::vector<u32> &indices, const glm::mat4 &transform)
 {
-    m_vertex_buffers.emplace_back(Buffer{
-        .buffer         = AllocateBuffer(vertices.data(), vertices.size() * sizeof(glm::vec3), D3D11_USAGE_DEFAULT, D3D11_BIND_VERTEX_BUFFER),
-        .size           = static_cast<u32>(vertices.size() * sizeof(glm::vec3)),
-        .offsets        = 0,
-        .element_stride = sizeof(glm::vec3),
-    });
-    m_index_buffers.emplace_back(IndexBuffer{
-        .buffer = AllocateBuffer(indices.data(), indices.size() * sizeof(u32), D3D11_USAGE_DEFAULT, D3D11_BIND_INDEX_BUFFER),
-        .byte_size = static_cast<u32>(indices.size() * sizeof(u32)),
-        .count = static_cast<u32>(indices.size()),
-    });
-    ModelConstants model_constants = {.model_transform = transform};
-    m_constant_buffers.emplace_back(
-        AllocateBuffer(static_cast<const void *>(&model_constants), sizeof(model_constants), D3D11_USAGE_DEFAULT, D3D11_BIND_CONSTANT_BUFFER));
+    // m_vertex_buffers.emplace_back(Buffer{
+    //     .buffer         = AllocateBuffer(vertices.data(), vertices.size() * sizeof(glm::vec3), D3D11_USAGE_DEFAULT, D3D11_BIND_VERTEX_BUFFER),
+    //     .size           = static_cast<u32>(vertices.size() * sizeof(glm::vec3)),
+    //     .offsets        = 0,
+    //     .element_stride = sizeof(glm::vec3),
+    // });
+    // m_index_buffers.emplace_back(IndexBuffer{
+    //     .buffer = AllocateBuffer(indices.data(), indices.size() * sizeof(u32), D3D11_USAGE_DEFAULT, D3D11_BIND_INDEX_BUFFER),
+    //     .byte_size = static_cast<u32>(indices.size() * sizeof(u32)),
+    //     .count = static_cast<u32>(indices.size()),
+    // });
+    // ModelConstants model_constants = {.model_transform = transform};
+    // m_constant_buffers.emplace_back(
+    //     AllocateBuffer(static_cast<const void *>(&model_constants), sizeof(model_constants), D3D11_USAGE_DEFAULT, D3D11_BIND_CONSTANT_BUFFER));
 }
 
 void ResourceManager::ClearMeshes()
 {
-    m_vertex_buffers.clear();
-    m_index_buffers.clear();
-    m_constant_buffers.clear();
+    // m_vertex_buffers.clear();
+    // m_index_buffers.clear();
+    // m_constant_buffers.clear();
 }
 
 void ResourceManager::UpdateCameraMatrix(const glm::mat4 &camera)

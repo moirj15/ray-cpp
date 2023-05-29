@@ -1,8 +1,8 @@
 #include "SceneViewer.hpp"
 
 #include "../Camera.h"
-#include "../geometry/scene.hpp"
 #include "../geometry/object.hpp"
+#include "../geometry/scene.hpp"
 
 namespace sv
 {
@@ -18,8 +18,8 @@ RenderContext::RenderContext(HWND window_handle, u32 window_width, u32 window_he
     // TODO: get latest dx11
     ID3D11Device        *baseDevice;
     ID3D11DeviceContext *baseContext;
-    Check(D3D11CreateDevice(
-        nullptr, D3D_DRIVER_TYPE_HARDWARE, nullptr, createDeviceFlags, desiredLevel, 1, D3D11_SDK_VERSION, &baseDevice, &featureLevel, &baseContext));
+    Check(D3D11CreateDevice(nullptr, D3D_DRIVER_TYPE_HARDWARE, nullptr, createDeviceFlags, desiredLevel, 1,
+        D3D11_SDK_VERSION, &baseDevice, &featureLevel, &baseContext));
     assert(featureLevel == D3D_FEATURE_LEVEL_11_1);
 
     baseDevice->QueryInterface(__uuidof(ID3D11Device3), &m_device);
@@ -120,27 +120,20 @@ SceneViewer::SceneViewer(const Window &window, const Scene &scene, Camera &camer
 
     m_ctx.m_context->RSSetViewports(1, &m_viewport);
 
-    for (const auto &[handle, geometry] : m_scene.GetGeometries()) {
-        if (geometry->type == Geometry::Type::Mesh) {
-            auto *mesh = reinterpret_cast<::Mesh *>(geometry.get());
-            m_resource_manager.AddMesh(mesh->GetVertices(), mesh->GetIndices());
-        }
-    }
+    // for (const auto &[handle, geometry] : m_scene.GetGeometries()) {
+    //     if (geometry->type == Geometry::Type::Mesh) {
+    //         auto *mesh = reinterpret_cast<::Mesh *>(geometry.get());
+    //         m_resource_manager.AddMesh(mesh->GetVertices(), mesh->GetIndices());
+    //     }
+    // }
+    pipelines::Init(m_ctx);
 }
 
-void SceneViewer::SetupScene(const Scene &scene)
-{
-}
+void SceneViewer::SetupScene(const Scene &scene) { m_resource_manager.PopulateFromScene(scene); }
 
-void SceneViewer::MoveCamera(const glm::vec3 &target)
-{
-    m_camera.Move(target);
-}
+void SceneViewer::MoveCamera(const glm::vec3 &target) { m_camera.Move(target); }
 
-void SceneViewer::RotateCamera(const glm::vec2 &rotation)
-{
-    m_camera.Rotate(rotation);
-}
+void SceneViewer::RotateCamera(const glm::vec2 &rotation) { m_camera.Rotate(rotation); }
 
 void SceneViewer::Tick()
 {
@@ -153,7 +146,8 @@ void SceneViewer::Tick()
 void SceneViewer::SwapBuffers()
 {
     m_ctx.m_swapchain->Present(1, 0);
-    m_ctx.m_context->ClearDepthStencilView(m_ctx.m_depth_stencil_view.Get(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0, 0);
+    m_ctx.m_context->ClearDepthStencilView(
+        m_ctx.m_depth_stencil_view.Get(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0, 0);
 }
 
 } // namespace sv

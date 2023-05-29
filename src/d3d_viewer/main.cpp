@@ -22,8 +22,7 @@ int main(int argc, char **argv)
     SDL_SetWindowResizable(window, SDL_FALSE);
 
     Camera camera{glm::vec3(0.0, 0.0, 5.0), glm::vec3(0.0, 0.0, -1.0), glm::vec3(0.0, 1.0, 0.0)};
-    Importer importer{"test-obj/block.obj"};
-    Scene scene = importer.Import();
+    Scene scene = imp::Import("test-obj/block.obj");
 
     SDL_SysWMinfo win_info;
     SDL_VERSION(&win_info.version);
@@ -31,6 +30,7 @@ int main(int argc, char **argv)
     HWND hwnd = win_info.info.win.window;
 
     sv::SceneViewer scene_viewer{Window{hwnd, WIDTH, HEIGHT}, scene, camera};
+    scene_viewer.SetupScene(scene);
 
     SDL_Event e;
     bool      running = true;

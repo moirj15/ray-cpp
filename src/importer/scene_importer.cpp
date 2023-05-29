@@ -32,10 +32,14 @@ static Scene ImportObj(const std::string &filepath)
     }
 
     Scene scene;
+    const MeshHandle mesh = scene.AddMesh(vertices, indices);
+    // TODO: fix mem leak
 
-    auto *mesh = new Mesh(std::move(vertices), std::move(indices));
-    assert(0); // TODO: need to switch to a file format that includes object positions
-    // scene.AddObject(mesh);
+    const ShaderHandle shader= scene.AddShader(new FixedColor({1.0, 1.0, 1.0}));
+
+//    auto *mesh = new Mesh(std::move(vertices), std::move(indices));
+//    assert(0); // TODO: need to switch to a file format that includes object positions
+     scene.AddObject(mesh, shader, {0, 0, 0});
 
     return scene;
 }
@@ -91,7 +95,7 @@ private:
                     ;
                 const size_t token_end = m_index;
                 ++m_index;
-                m_tokens.emplace_back({})
+//                m_tokens.emplace_back({})
             }
         }
     }
@@ -106,7 +110,7 @@ static std::string_view GetFileExtension(const std::string_view filename)
 
 Scene Import(const std::string &path)
 {
-    if (GetFileExtension(path) == ".obj") {
+    if (GetFileExtension(path) == "obj") {
         return ImportObj(path);
     } else {
         assert(0);

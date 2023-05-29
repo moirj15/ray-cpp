@@ -35,7 +35,7 @@ void Tracer::RenderFrame()
         std::vector<Ray> next_bounce;
         bool no_hits = true;
         // TODO: Find a better method to prevent self intersections
-        ObjectHandle last_hit;
+        ObjectHandle last_hit = ObjectHandle::CreateInvalid();
         for (u32 d = 0; d < depth; d++) {
             for (const auto &ray : bounce_rays) {
                 SurfaceData intersect_data;

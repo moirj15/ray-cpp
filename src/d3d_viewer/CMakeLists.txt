@@ -1,8 +1,12 @@
 add_library(d3dViewerLib STATIC
         SceneViewer.cpp
+        SceneViewer.hpp
         Renderer.cpp
+        Renderer.hpp
         ResourceManager.cpp
+        ResourceManager.hpp
         Shaders.cpp
+        Shaders.hpp
         ../Camera.cpp
         ../file_io.cpp
         )

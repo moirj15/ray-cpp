@@ -31,16 +31,18 @@ Renderer::Renderer(RenderContext &ctx, const ResourceManager &rm, const Shaders 
 void Renderer::DrawScene()
 {
     m_ctx.m_context->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-    m_ctx.m_context->IASetInputLayout(m_shaders.GetFlatShader().layout.Get());
-    const auto &vertex_buffers   = m_resource_manager.GetVertexBuffers();
-    const auto &index_buffers    = m_resource_manager.GetIndexBuffers();
-    const auto &constant_buffers = m_resource_manager.GetConstantBuffers();
-    for (size_t i = 0; i < vertex_buffers.size(); i++) {
-        m_ctx.m_context->IASetVertexBuffers(0, 1, vertex_buffers[i].buffer.GetAddressOf(), &vertex_buffers[i].element_stride, &vertex_buffers[i].offsets);
-        m_ctx.m_context->IASetIndexBuffer(index_buffers[i].buffer.Get(), DXGI_FORMAT_R32_UINT, 0);
-        m_ctx.m_context->VSSetConstantBuffers(1, 1, constant_buffers[i].GetAddressOf());
-        m_ctx.m_context->DrawIndexed(index_buffers[i].count, 0, 0);
-    }
+    //m_ctx.m_context->IASetInputLayout(m_shaders.GetFlatShader().layout.Get());
+    RenderPipeline flat = pipelines::GetFlatPipeline();
+    m_ctx.m_context->IASetInputLayout(flat.vertex_layout);
+    m_ctx.m_context->VSSetShader(flat.vs, nullptr, 0);
+    m_ctx.m_context->PSSetShader(flat.ps, nullptr, 0);
+    const auto &vertex_buffers   = m_resource_manager.GetVertexBuffer();
+    const auto &index_buffers    = m_resource_manager.GetIndexBuffer();
+    const auto &constant_buffers = m_resource_manager.GetStaticConstants();
+    m_ctx.m_context->IASetVertexBuffers(0, 1, vertex_buffers.buffer.GetAddressOf(), &vertex_buffers.element_stride, &vertex_buffers.offsets);
+    m_ctx.m_context->IASetIndexBuffer(index_buffers.buffer.Get(), DXGI_FORMAT_R32_UINT, 0);
+    m_ctx.m_context->VSSetConstantBuffers(1, 1, &constant_buffers);
+    m_ctx.m_context->DrawIndexed(index_buffers.count, 0, 0);
 }
 
 } // namespace sv

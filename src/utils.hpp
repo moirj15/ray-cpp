@@ -1,6 +1,4 @@
-#ifndef UTILS_H
-#define UTILS_H
-
+#pragma once
 #include <cstdint>
 #include <cstdio>
 #include <cstdlib>
@@ -51,12 +49,13 @@ void closeFile(FILE *fp);
 template<typename Tag>
 class Handle
 {
-    u32 m_value = std::numeric_limits<u32>::max();
+    static constexpr u32 INVALID = std::numeric_limits<u32>::max();
+    u32 m_value = INVALID;
 
 public:
-    static Handle CreateInvalid() { return Handle(); }
+    static Handle CreateInvalid() { return Handle(INVALID); }
 
-    Handle() = default;
+    //Handle() = default;
     explicit Handle(const uint64_t value) : m_value(value) {}
 
     friend bool operator==(Handle a, Handle b) { return a.m_value == b.m_value; }
@@ -65,7 +64,7 @@ public:
 
     bool operator==(const uint64_t b) const { return m_value == b; }
 
-    bool operator!=(const uint64_t b) const { return m_value != b; }
+    //bool operator!=(const uint64_t b) const { return m_value != b; }
 
     uint64_t operator++(int) { return m_value++; }
 
@@ -90,4 +89,3 @@ struct hash<Handle<Tag>> {
     };                                                                                                                                                         \
     using name = Handle<__##name##Tag>
 
-#endif

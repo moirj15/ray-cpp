@@ -1,10 +1,15 @@
 add_library(geometryLib
         STATIC
         material.cpp
+        material.hpp
         object.cpp
+        object.hpp
         scene.cpp
+        scene.hpp
         shader.cpp
+        shader.hpp
         oct_tree.cpp
+        oct_tree.hpp
 )
 
 target_include_directories(geometryLib
