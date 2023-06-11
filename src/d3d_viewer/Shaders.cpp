@@ -17,10 +17,11 @@ Shaders::Shaders(RenderContext &ctx) : m_ctx(ctx), m_flat_shader(CreateShader("s
 
 Shader Shaders::CreateShader(const std::string &filename)
 {
-    ComPtr<ID3DBlob>    vs_binary = CompileShader(filename, "VSMain", "vs_5_0");
+    ComPtr<ID3DBlob>    vs_binary = CompileShader(filename, "VSMain", "vs_5_1");
     ID3D11VertexShader *vs        = nullptr;
     Check(m_ctx.m_device->CreateVertexShader(vs_binary->GetBufferPointer(), vs_binary->GetBufferSize(), nullptr, &vs));
 
+    // TODO: remove this, planning on switching to vertex pulling
     ID3D11InputLayout       *input_layout = nullptr;
     D3D11_INPUT_ELEMENT_DESC input_desc[] = {
         {
@@ -35,7 +36,7 @@ Shader Shaders::CreateShader(const std::string &filename)
     };
     Check(m_ctx.m_device->CreateInputLayout(input_desc, 1, vs_binary->GetBufferPointer(), vs_binary->GetBufferSize(), &input_layout));
 
-    ComPtr<ID3DBlob>   ps_binary = CompileShader(filename, "PSMain", "ps_5_0");
+    ComPtr<ID3DBlob>   ps_binary = CompileShader(filename, "PSMain", "ps_5_1");
     ID3D11PixelShader *ps        = nullptr;
     Check(m_ctx.m_device->CreatePixelShader(ps_binary->GetBufferPointer(), ps_binary->GetBufferSize(), nullptr, &ps));
 

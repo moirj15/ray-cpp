@@ -1,14 +1,21 @@
-cbuffer Constants : register(b0) {
+struct GlobalConstants
+{
     float4x4 view_projection;
 };
 
-cbuffer ModelConstatns : register(b1) {
+ConstantBuffer<GlobalConstants> global_constants : register(b0);
+
+// TODO: something better later
+struct ObjectConstants
+{
     float4x4 transform;
 };
 
+ConstantBuffer<ObjectConstants> object_constants: register(b1);
+
 float4 VSMain(float3 position : POSITION) : SV_POSITION
 {
-    float4 transformed_pos = mul(view_projection* transform, float4(position, 1.0));
+    float4 transformed_pos = mul(global_constants.view_projection * object_constants.transform, float4(position, 1.0));
     return transformed_pos;
 }
 
