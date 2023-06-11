@@ -42,6 +42,7 @@ void ResourceManager::PopulateFromScene(const Scene &scene)
     m_index_buf.byte_size           = indices.size() * sizeof(u32);
     m_index_buf.buffer              = AllocateBuffer(indices.data(), m_index_buf.byte_size, D3D11_USAGE_DEFAULT, D3D11_BIND_INDEX_BUFFER);
     // TODO: setup constant buffers
+
 }
 
 void ResourceManager::AddMesh(const std::vector<glm::vec3> &vertices, const std::vector<u32> &indices, const glm::mat4 &transform)
